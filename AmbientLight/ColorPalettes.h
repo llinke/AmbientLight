@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-#define DUMP_PALETTE
+// #define DUMP_PALETTE
 
 //#define BOOST_COLORS
 #define BOOST_SAT_MIN 160

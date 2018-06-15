@@ -39,18 +39,24 @@
 #include <WiFiManager.h>	  //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
 
 // **************************************************
+// *** Blynk
+// **************************************************
+#define BLYNK_PRINT Serial
+#define BLYNK_MAX_SENDBYTES 1024 // Default is 128
+#include <BlynkSimpleEsp8266.h>
+// You should get Auth Token in the Blynk App.
+// Go to the Project Settings (nut icon).
+char auth[] = "eb5f226404904fefb522f6c3b5f60fa2";
+
+// **************************************************
 // *** Variable and Constamts  Declarations
 // **************************************************
 const String wifiApName = "AP_AmbientLight";
 const int ConfigureAPTimeout = 300;
 
-const uint8_t globalBrightness = 128;
+volatile uint8_t globalBrightness = 128;
 
-// Real room sizes
-const std::vector<int> groupRoomSizes = {PIXEL_COUNT};
-
-int groupRoomTotalSize = 0;
-int groupRoomCount = 0;
+const std::vector<int> groupSizes = {PIXEL_COUNT};
 int activeGrpNr = 0;
 
 // Static size
@@ -207,28 +213,21 @@ int initStrip(bool doStart = false, bool playDemo = true)
 
 	InitWifi();
 
-	DEBUG_PRINTLN("Calculating groups.");
-	groupRoomCount = groupRoomSizes.size();
-	groupRoomTotalSize = 0;
-	for (int i = 0; i < groupRoomSizes.size(); i++)
-	{
-		groupRoomTotalSize += groupRoomSizes[i];
-	}
-
-	DEBUG_PRINTLN("Adding special groups.");
 	neoGroups.clear();
-	// Group 0: all LEDs
-	addGroup("All LEDs' group", 0, PIXEL_COUNT, 0);
-	activeGrpNr = 0;
+	// DEBUG_PRINTLN("Adding special groups.");
+	// // Group 0: all LEDs
+	// addGroup("All LEDs' group", 0, PIXEL_COUNT, 0);
+	// activeGrpNr = 0;
 
-	DEBUG_PRINTLN("Adding " + String(groupRoomCount) + " groups for rooms.");
+	DEBUG_PRINTLN("Adding " + String(groupSizes.size()) + " groups.");
 	int nextGroupStart = 0;
-	for (int i = 0; i < groupRoomSizes.size(); i++)
+	for (int i = 0; i < groupSizes.size(); i++)
 	{
-		String roomName = "Raum " + String(i + 1);
-		addGroup(roomName, nextGroupStart, groupRoomSizes[i], 0);
-		nextGroupStart += groupRoomSizes[i];
+		String groupName = "Group " + String(i + 1);
+		addGroup(groupName, nextGroupStart, groupSizes[i], 0);
+		nextGroupStart += groupSizes[i];
 	}
+	activeGrpNr = 0;
 
 	return doStart ? startStrip() : PIXEL_COUNT;
 }
@@ -298,6 +297,7 @@ bool isGroupFadingOut(int grpNr)
 
 int startGroup(int grpNr, bool runOnlyOnce = false)
 {
+	DEBUG_PRINTLN("Starting group #" + String(grpNr) + "...");
 	NeoGroup *neoGroup = &(neoGroups.at(grpNr));
 	neoGroup->Start(runOnlyOnce);
 
@@ -306,6 +306,7 @@ int startGroup(int grpNr, bool runOnlyOnce = false)
 
 int stopGroup(int grpNr, bool stopNow = false)
 {
+	DEBUG_PRINTLN("Stopping group #" + String(grpNr) + "...");
 	NeoGroup *neoGroup = &(neoGroups.at(grpNr));
 	neoGroup->Stop(stopNow);
 
@@ -320,7 +321,8 @@ int setGrpEffect(
 	direction direction = FORWARD,
 	mirror mirror = MIRROR0,
 	wave wave = LINEAR,
-	int speed = 1)
+	int speed = 1,
+	double fpsFactor = 1.0)
 {
 	NeoGroup *neoGroup = &(neoGroups.at(grpNr));
 	neoGroup->Stop(true);
@@ -330,7 +332,7 @@ int setGrpEffect(
 	//int fxFps = fps <= 0 ? neoGroup->GetFps() : fps;
 	int fxFps = fps > 0 ? fps : currFps.at(grpNr);
 
-	uint16_t result = neoGroup->ConfigureEffect(pattern, fxGlitter, fxFps, direction, mirror, wave, speed);
+	uint16_t result = neoGroup->ConfigureEffect(pattern, fxGlitter, fxFps, direction, mirror, wave, speed, fpsFactor);
 	//neoGroup->Start();
 
 	return result;
@@ -354,15 +356,14 @@ int setGrpColors(
 // [Event handling helper methods]
 void StartStopEffect(int grpNr)
 {
-	int offsetGrpNr = grpNr;
-	NeoGroup *neoGroup = &(neoGroups.at(offsetGrpNr));
+	NeoGroup *neoGroup = &(neoGroups.at(grpNr));
 	DEBUG_PRINTLN("StartStopEffect ---------------------------------------------");
-	DEBUG_PRINTLN("Fx: Starting/stopping group #" + String(offsetGrpNr) + ": " + String((neoGroup->Active)) + "->" + String(!(neoGroup->Active)) + ".");
+	DEBUG_PRINTLN("Fx: Starting/stopping group #" + String(grpNr) + ": " + String((neoGroup->Active)) + "->" + String(!(neoGroup->Active)) + ".");
 	bool stopNow = false;
 	if (neoGroup->Active)
-		stopGroup(offsetGrpNr, stopNow);
+		stopGroup(grpNr, stopNow);
 	else
-		startGroup(offsetGrpNr);
+		startGroup(grpNr);
 }
 
 void SetEffect(int grpNr, int fxNr,
@@ -386,6 +387,7 @@ void SetEffect(int grpNr, int fxNr,
 	pattern fxPattern = pattern::STATIC;
 	int fxGlitter = currGlitter.at(grpNr);
 	int fxFps = currFps.at(grpNr);
+	double fxFpsFactor = 1.0;
 	mirror fxMirror = MIRROR0;
 	wave fxWave = wave::LINEAR;
 
@@ -406,7 +408,8 @@ void SetEffect(int grpNr, int fxNr,
 		fxPatternName = "Noise";
 		fxPattern = pattern::NOISE;
 		fxMirror = mirror::MIRROR1; // mirror::MIRROR0;
-		fxFps *= 2;					// double FPS looks better
+		// fxFps *= 2; // double FPS looks better
+		fxFpsFactor = 2.0; // double FPS looks better
 		break;
 	case fxNrConfetti:
 		fxPatternName = "Confetti";
@@ -414,18 +417,21 @@ void SetEffect(int grpNr, int fxNr,
 		fxGlitter = 0;
 		// Not in this case :-p
 		// fxFps /= 2; // half FPS looks better
+		// fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrFade:
 		fxPatternName = "Fade";
 		fxPattern = pattern::FADE;
-		fxFps /= 2; // half FPS looks better
+		// fxFps /= 2; // half FPS looks better
+		fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrComet:
 		fxPatternName = "Comet";
 		fxPattern = pattern::COMET;
 		fxWave = wave::EASEINOUT;
 		// fxWave = wave::SINUS;
-		fxFps *= 3; //1.5; // faster FPS looks better
+		// fxFps *= 3; //1.5; // faster FPS looks better
+		fxFpsFactor = 1.5; // faster FPS looks better
 		// fxMirror = mirror::MIRROR0;
 		fxMirror = mirror::MIRROR2;
 		break;
@@ -434,7 +440,8 @@ void SetEffect(int grpNr, int fxNr,
 		fxPattern = pattern::COMET;
 		// fxWave = wave::EASEINOUT;
 		fxWave = wave::SINUS;
-		fxFps *= 1.5; // faster FPS looks better
+		// fxFps *= 1.5; // faster FPS looks better
+		fxFpsFactor = 1.5; // faster FPS looks better
 		// fxMirror = mirror::MIRROR0;
 		fxMirror = mirror::MIRROR2;
 		break;
@@ -442,7 +449,8 @@ void SetEffect(int grpNr, int fxNr,
 		fxPatternName = "Fill";
 		fxPattern = pattern::FILL;
 		fxWave = wave::EASEINOUT;
-		fxFps *= 1.5; // faster FPS looks better
+		// fxFps *= 1.5; // faster FPS looks better
+		fxFpsFactor = 1.5; // faster FPS looks better
 		// fxMirror = mirror::MIRROR0;
 		fxMirror = mirror::MIRROR2;
 		break;
@@ -463,7 +471,8 @@ void SetEffect(int grpNr, int fxNr,
 		fxDirection,
 		fxMirror,
 		fxWave,
-		speed);
+		speed,
+		fxFpsFactor);
 	if (startFx)
 		startGroup(grpNr, onlyOnce);
 	DEBUG_PRINTLN("SetEffect ---------------------------------------------------");
@@ -494,12 +503,13 @@ void SetColors(int grpNr, int colNr)
 	}
 
 	String palKey = ColorNames[colNr - 1];
-	DEBUG_PRINTLN("Col: Changing color palette to '" + String(palKey) + "'.");
+	DEBUG_PRINTLN("Col: Changing color palette to '" + palKey + "'.");
 	if (ColorPalettes.find(palKey) != ColorPalettes.end())
 	{
 		std::vector<CRGB> colors = ColorPalettes.find(palKey)->second;
 		if (colors == (std::vector<CRGB>)NULL)
 		{
+			DEBUG_PRINTLN("Col: Generating colours for hue " + String(currentHue) + " using method '" + palKey + "'.");
 			colors = GeneratePaletteFromHue(currentHue, palKey);
 		}
 		setGrpColors(grpNr, colors, true, true, CROSSFADE_PALETTES);
@@ -508,45 +518,138 @@ void SetColors(int grpNr, int colNr)
 
 void NextEffect(int nextFx = -1)
 {
-	int offsetGrpNr = activeGrpNr;
 	if (nextFx < 0)
 	{
-		(currFxNr.at(offsetGrpNr))++;
+		(currFxNr.at(activeGrpNr))++;
 	}
 	else
 	{
-		currFxNr.at(offsetGrpNr) = nextFx;
+		currFxNr.at(activeGrpNr) = nextFx;
 	}
-	if (currFxNr.at(offsetGrpNr) > maxFxNr)
+	if (currFxNr.at(activeGrpNr) > maxFxNr)
 	{
-		currFxNr.at(offsetGrpNr) = 1;
+		currFxNr.at(activeGrpNr) = 1;
 	}
-	DEBUG_PRINTLN("CONTROL: Changing effect number to: " + String(currFxNr.at(offsetGrpNr)) + ".");
-	SetEffect(offsetGrpNr, currFxNr.at(offsetGrpNr), true, false);
+	DEBUG_PRINTLN("CONTROL: Changing effect number to: " + String(currFxNr.at(activeGrpNr)) + ".");
+	SetEffect(activeGrpNr, currFxNr.at(activeGrpNr), true, false);
 }
 
 void NextColor(int nextCol = -1)
 {
-	int offsetGrpNr = activeGrpNr;
 	if (nextCol < 0)
 	{
-		(currColNr.at(offsetGrpNr))++;
+		(currColNr.at(activeGrpNr))++;
 	}
 	else
 	{
-		currColNr.at(offsetGrpNr) = nextCol;
+		currColNr.at(activeGrpNr) = nextCol;
 	}
-	if (currColNr.at(offsetGrpNr) > maxColNr)
+	if (currColNr.at(activeGrpNr) > maxColNr)
 	{
-		currColNr.at(offsetGrpNr) = 1;
+		currColNr.at(activeGrpNr) = 1;
 	}
-	DEBUG_PRINTLN("CONTROL: Changing color number to: " + String(currColNr.at(offsetGrpNr)) + ".");
-	SetColors(offsetGrpNr, currColNr.at(offsetGrpNr));
+	DEBUG_PRINTLN("CONTROL: Changing color number to: " + String(currColNr.at(activeGrpNr)) + ".");
+	SetColors(activeGrpNr, currColNr.at(activeGrpNr));
 }
 #pragma endregion
 
 // **************************************************
-// *** Application Setuo
+// *** BLYNK
+// **************************************************
+#pragma region Application Setup
+// V0 In/Off
+BLYNK_WRITE(V0)
+{
+	int pinValue = param.asInt();
+	DEBUG_PRINTLN("BLYNK V0: grp#" + String(activeGrpNr) + ", on/off => " + String(pinValue));
+	if (pinValue == 0)
+	{
+		stopGroup(activeGrpNr, false); // no immediate stop, fade out
+	}
+	else
+	{
+		startGroup(activeGrpNr, false); // no runOnlyOnce
+	}
+}
+
+// V1 Brightness
+BLYNK_WRITE(V1)
+{
+	int pinValue = param.asInt();
+	DEBUG_PRINTLN("BLYNK V1: grp#" + String(activeGrpNr) + ", brightness => " + String(pinValue));
+	globalBrightness = pinValue;
+	FastLED.setBrightness(globalBrightness);
+}
+
+// V2 FPS
+BLYNK_WRITE(V2)
+{
+	int pinValue = param.asInt();
+	DEBUG_PRINTLN("BLYNK V2: grp#" + String(activeGrpNr) + ", FPS => " + String(pinValue));
+	currFps.at(activeGrpNr) = pinValue;
+	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
+	neoGroup->ChangeFps(currFps.at(activeGrpNr));
+}
+
+// V3 Effect DropDown
+BLYNK_WRITE(V3)
+{
+	int pinValue = param.asInt();
+	DEBUG_PRINTLN("BLYNK V3: grp#" + String(activeGrpNr) + ", FX => " + String(pinValue));
+	currFxNr[activeGrpNr] = pinValue;
+	SetEffect(activeGrpNr, currFxNr[activeGrpNr], true, false);
+}
+
+// V10 Colour DropDown
+BLYNK_WRITE(V10)
+{
+	int pinValue = param.asInt();
+	DEBUG_PRINTLN("BLYNK V10: grp#" + String(activeGrpNr) + ", color => " + String(pinValue));
+	NextColor(pinValue);
+}
+
+// V11 Colour next
+BLYNK_WRITE(V11)
+{
+	int pinValue = param.asInt();
+	if (pinValue == 0)
+		return; // trigger only on "pressed", not "released"
+	DEBUG_PRINTLN("BLYNK V11: grp#" + String(activeGrpNr) + ", color => [NEXT]");
+	NextColor();
+}
+
+// V12 Hue
+BLYNK_WRITE(V12)
+{
+	int pinValue = param.asInt();
+	DEBUG_PRINTLN("BLYNK V12: grp#" + String(activeGrpNr) + ", hue => " + String(pinValue));
+	currentHue = constrain(pinValue, 0, 255);
+	SetColors(activeGrpNr, currColNr[activeGrpNr]);
+}
+
+void BlynkSetup()
+{
+	BlynkParamAllocated colorNames(1024); // list length, in bytes
+	for (int cNr = 0; cNr < ColorNames.size(); cNr++)
+	{
+		colorNames.add(ColorNames.at(cNr));
+	}
+	Blynk.setProperty(V10, "labels", colorNames);
+
+	BlynkParamAllocated fxNames(1024); // list length, in bytes
+	fxNames.add("Welle");
+	fxNames.add("Dynamisch");
+	fxNames.add("Rauschen");
+	fxNames.add("Konfetti");
+	fxNames.add("Blenden");
+	fxNames.add("Komet");
+	fxNames.add("Orbit");
+	Blynk.setProperty(V3, "labels", fxNames);
+}
+#pragma endregion
+
+// **************************************************
+// *** Application Setup
 // **************************************************
 #pragma region Application Setup
 void setup()
@@ -569,26 +672,30 @@ void setup()
 	DEBUG_PRINTLN("FastLED: Starting LED strip.");
 	startStrip();
 
-	for (int i = 0; i < groupRoomCount; i++)
+	for (int grpNr = 0; grpNr < groupSizes.size(); grpNr++)
 	{
-		int offsetGrpNr = i;
-		DEBUG_PRINTLN("FastLED: Setting up and starting group #" + String(offsetGrpNr) + ".");
+		DEBUG_PRINTLN("FastLED: Setting up and starting group #" + String(grpNr) + ".");
 		bool startFx = true;
 #ifdef DO_NOT_START_FX_ON_INIT
 		startFx = false;
 #endif
 		int currCol = defaultColNr;
-		currColNr[offsetGrpNr] = currCol;
-		SetColors(offsetGrpNr, currCol);
+		currColNr[grpNr] = currCol;
+		SetColors(grpNr, currCol);
 
 		int currFx = defaultFxNr;
-		currFxNr[offsetGrpNr] = currFx;
-		SetEffect(offsetGrpNr, currFx, startFx, false);
-		//startGroup(offsetGrpNr);
+		currFxNr[grpNr] = currFx;
+		SetEffect(grpNr, currFx, startFx, false);
+		//startGroup(grpNr);
 	}
 	//activeGrpNr = 0;
 
 	DEBUG_PRINT("FastLED: Active group #" + String(activeGrpNr));
+
+	Blynk.config(auth);
+	Blynk.connect();
+
+	BlynkSetup();
 }
 #pragma endregion
 
@@ -599,6 +706,8 @@ void setup()
 // Main loop
 void loop()
 {
+	Blynk.run();
+
 	// Evaluate expander pins and execute attached callbacks
 	//DEBUG_PRINTLN("LOOP ------------------------------------------------------");
 
@@ -609,27 +718,14 @@ void loop()
 	}
 
 	bool ledsUpdated = false;
-	for (int i = 0; i < groupRoomCount; i++)
+	for (int grpNr = 0; grpNr < groupSizes.size(); grpNr++)
 	{
-		int offsetGrpNr = i;
-		NeoGroup *neoGroup = &(neoGroups.at(offsetGrpNr));
+		NeoGroup *neoGroup = &(neoGroups.at(grpNr));
 
 		if ((neoGroup->LedFirstNr + neoGroup->LedCount) <= PIXEL_COUNT)
 		{
 			ledsUpdated |= neoGroup->Update();
 		}
-	}
-
-	// Cycle palette of group at corresponding status LED
-	static unsigned long lastUpdate = 0;
-	static unsigned long updateInterval = (1000 / 50); // 50 fps
-	if ((millis() - lastUpdate) > updateInterval)
-	{
-#ifdef DEBUG_LOOP
-		DEBUG_PRINTLN("DONE");
-#endif
-		ledsUpdated = true;
-		lastUpdate = millis();
 	}
 
 	if (ledsUpdated)

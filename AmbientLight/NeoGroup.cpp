@@ -90,6 +90,7 @@ class NeoGroup
 	int LedOffset = 0;
 
 	int fxFps;
+	double fxFpsFactor = 1.0;
 	unsigned long lastUpdate;
 	int fxStep;
 	int fxSpeed = 1;
@@ -155,13 +156,15 @@ class NeoGroup
 		direction direction = FORWARD,
 		mirror mirror = MIRROR0,
 		wave wave = LINEAR,
-		int speed = 1)
+		int speed = 1,
+		double fpsFactor = 1.0)
 	{
 		DEBUG_GRP_PRINTLN("GRP[" + String(GroupID) + "].CfgFX: Stopping effect execution.");
 		Stop(true);
 
 		DEBUG_GRP_PRINTLN("GRP[" + String(GroupID) + "].CfgFX: Configuring effect parameters.");
 		ChangeFps(fps);
+		fxFpsFactor = fpsFactor;
 		fxDirection = direction;
 		fxStep = (fxDirection == REVERSE) ? 255 : 0;
 		fxSpeed = speed;
@@ -374,7 +377,7 @@ class NeoGroup
 			return false; // LEDs not updated
 		}
 
-		int updateInterval = (1000 / fxFps);
+		int updateInterval = (1000 / (fxFps * fxFpsFactor));
 		int sinceLastUpdate = (millis() - lastUpdate);
 		if (sinceLastUpdate > updateInterval)
 		{
@@ -404,7 +407,7 @@ class NeoGroup
 			int timesToUpdate = constrain(sinceLastUpdate / updateInterval, 1, 8); // skip max 8 steps
 			if (timesToUpdate > 1)
 			{
-				DEBUG_GRP_PRINTLN("GRP[" + String(GroupID) + "].Update: skipping " + String(timesToUpdate - 1) + " steps to catch up target FPS " + String(fxFps) + ".");
+				DEBUG_GRP_PRINTLN("GRP[" + String(GroupID) + "].Update: skipping " + String(timesToUpdate - 1) + " steps to catch up target FPS " + String(fxFps * fxFpsFactor) + ".");
 				if (Active)
 					NextFxStep(timesToUpdate - 1);
 			}
