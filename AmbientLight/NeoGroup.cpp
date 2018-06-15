@@ -38,7 +38,7 @@
 
 #define FADEOUT_DURATION 500
 #define FADEOUT_STEPS 16
-#define CROSSFADE_PALETTES false
+#define CROSSFADE_PALETTES true
 #define CROSSFADE_MAX_CHANGE_PER_STEP 16
 
 #pragma region Enums
@@ -103,7 +103,7 @@ class NeoGroup
 	bool onlyOnce = false;
 
 	//std::vector<CRGB> currentColors = {};
-	bool crossFadeColors = false;
+	bool crossFadeColors = CROSSFADE_PALETTES; //false;
 	std::vector<CRGB> currentColors = {0x000000, 0x000000};
 	CRGBPalette16 colorPalette = CRGBPalette16();
 	CRGBPalette16 colorPaletteNew = CRGBPalette16();
@@ -243,7 +243,7 @@ class NeoGroup
 		std::vector<CRGB> colors,
 		bool clearFirst = true,
 		bool generatePalette = true,
-		bool crossFade = false)
+		bool crossFade = CROSSFADE_PALETTES)
 	{
 		DEBUG_GRP_PRINTLN("GRP[" + String(GroupID) + "].CfgColor: Configuring colors.");
 		if (clearFirst)
@@ -595,9 +595,9 @@ class NeoGroup
 	void FxFill()
 	{
 #ifdef PIXEL_USE_OFFSET
-	// fadeToBlackBy(&leds[LedFirstNr], LedCount, 16 * fxSpeed);
+		// fadeToBlackBy(&leds[LedFirstNr], LedCount, 16 * fxSpeed);
 #else
-	// fadeToBlackBy(LedFirst, LedCount, 16 * fxSpeed);
+		// fadeToBlackBy(LedFirst, LedCount, 16 * fxSpeed);
 #endif
 		int fxStep2 = (fxDirection == REVERSE) ? 255 - fxStep : fxStep;
 		// uint8_t bri = map8(GetEasedFxStep(fxStep2), 32, 255);

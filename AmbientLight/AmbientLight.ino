@@ -71,13 +71,14 @@ const uint8_t fxNrFill = 8;
 const int maxFxNr = 7;
 const int defaultFxNr = fxNrWave;
 std::vector<int> currFxNr;
-int maxColNr = 1; // will be dynamically assigned once palettes are generated
-const int defaultColNr = 1;
+int maxColNr = 1;			// will be dynamically assigned once palettes are generated
+const int defaultColNr = 2; // "Analogous"
 std::vector<int> currColNr;
 const int defaultFps = 50; //25;
 std::vector<int> currFps;
 const int defaultGlitter = 0; //32;
 std::vector<int> currGlitter;
+uint8_t currentHue = HUE_AQUA;
 
 //std::vector<NeoGroup *> neoGroups;
 std::vector<NeoGroup> neoGroups;
@@ -497,6 +498,10 @@ void SetColors(int grpNr, int colNr)
 	if (ColorPalettes.find(palKey) != ColorPalettes.end())
 	{
 		std::vector<CRGB> colors = ColorPalettes.find(palKey)->second;
+		if (colors == (std::vector<CRGB>)NULL)
+		{
+			colors = GeneratePaletteFromHue(currentHue, palKey);
+		}
 		setGrpColors(grpNr, colors, true, true, CROSSFADE_PALETTES);
 	}
 }
