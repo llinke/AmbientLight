@@ -59,16 +59,16 @@ struct CRGB leds[PIXEL_COUNT];
 //struct CRGB *leds = NULL;
 bool ledsInitialized = false;
 bool ledsStarted = false;
-// 0: Wave, 1: Dynamic Wave, 2: Noise, 3: Confetti, 4: Fade, 5: Comet, 6: Orbit, 7: Fill
-const uint8_t fxNrWave = 0;
-const uint8_t fxNrDynamicWave = 1;
-const uint8_t fxNrNoise = 2;
-const uint8_t fxNrConfetti = 3;
-const uint8_t fxNrFade = 4;
-const uint8_t fxNrComet = 5;
-const uint8_t fxNrOrbit = 6;
-const uint8_t fxNrFill = 7;
-const int maxFxNr = 6;
+// 1: Wave, 2: Dynamic Wave, 3: Noise, 4: Confetti, 5: Fade, 6: Comet, 7: Orbit, 8: Fill
+const uint8_t fxNrWave = 1;
+const uint8_t fxNrDynamicWave = 2;
+const uint8_t fxNrNoise = 3;
+const uint8_t fxNrConfetti = 4;
+const uint8_t fxNrFade = 5;
+const uint8_t fxNrComet = 6;
+const uint8_t fxNrOrbit = 7;
+const uint8_t fxNrFill = 8;
+const int maxFxNr = 7;
 const int defaultFxNr = fxNrWave;
 std::vector<int> currFxNr;
 int maxColNr = 1; // will be dynamically assigned once palettes are generated
