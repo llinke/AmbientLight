@@ -57,7 +57,7 @@ const int ConfigureAPTimeout = 300;
 volatile uint8_t globalBrightness = 128;
 
 const std::vector<int> groupSizes = {PIXEL_COUNT};
-int activeGrpNr = 0;
+volatile int activeGrpNr = 0;
 
 // Static size
 struct CRGB leds[PIXEL_COUNT];
@@ -398,11 +398,13 @@ void SetEffect(int grpNr, int fxNr,
 		fxPatternName = "Wave";
 		fxPattern = pattern::WAVE;
 		fxMirror = mirror::MIRROR2;
+		// fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrDynamicWave:
 		fxPatternName = "Dynamic Wave";
 		fxPattern = pattern::DYNAMICWAVE;
 		fxMirror = mirror::MIRROR1; // mirror::MIRROR0;
+		// fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrNoise:
 		fxPatternName = "Noise";
@@ -432,8 +434,8 @@ void SetEffect(int grpNr, int fxNr,
 		// fxWave = wave::SINUS;
 		// fxFps *= 3; //1.5; // faster FPS looks better
 		fxFpsFactor = 1.5; // faster FPS looks better
-		// fxMirror = mirror::MIRROR0;
-		fxMirror = mirror::MIRROR2;
+		fxMirror = mirror::MIRROR0;
+		// fxMirror = mirror::MIRROR2;
 		break;
 	case fxNrOrbit:
 		fxPatternName = "Orbit";
@@ -585,6 +587,7 @@ BLYNK_WRITE(V1)
 BLYNK_WRITE(V2)
 {
 	int pinValue = param.asInt();
+	pinValue = constrain(pinValue, 10, 100);
 	DEBUG_PRINTLN("BLYNK V2: grp#" + String(activeGrpNr) + ", FPS => " + String(pinValue));
 	currFps.at(activeGrpNr) = pinValue;
 	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
@@ -595,6 +598,7 @@ BLYNK_WRITE(V2)
 BLYNK_WRITE(V3)
 {
 	int pinValue = param.asInt();
+	pinValue = constrain(pinValue, 1, maxFxNr);
 	DEBUG_PRINTLN("BLYNK V3: grp#" + String(activeGrpNr) + ", FX => " + String(pinValue));
 	currFxNr[activeGrpNr] = pinValue;
 	SetEffect(activeGrpNr, currFxNr[activeGrpNr], true, false);
@@ -604,6 +608,7 @@ BLYNK_WRITE(V3)
 BLYNK_WRITE(V10)
 {
 	int pinValue = param.asInt();
+	pinValue = constrain(pinValue, 1, ColorNames.size());
 	DEBUG_PRINTLN("BLYNK V10: grp#" + String(activeGrpNr) + ", color => " + String(pinValue));
 	NextColor(pinValue);
 }
@@ -612,10 +617,13 @@ BLYNK_WRITE(V10)
 BLYNK_WRITE(V11)
 {
 	int pinValue = param.asInt();
+	DEBUG_PRINTLN("BLYNK V11: grp#" + String(activeGrpNr) + ", pinValue => " + String(pinValue));
 	if (pinValue == 0)
-		return; // trigger only on "pressed", not "released"
-	DEBUG_PRINTLN("BLYNK V11: grp#" + String(activeGrpNr) + ", color => [NEXT]");
-	NextColor();
+	{
+		DEBUG_PRINTLN("BLYNK V11: grp#" + String(activeGrpNr) + ", color => [NEXT]");
+		NextColor();
+		Blynk.virtualWrite(V10, currColNr[activeGrpNr]);
+	}
 }
 
 // V12 Hue
