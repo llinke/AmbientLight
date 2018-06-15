@@ -627,6 +627,21 @@ BLYNK_WRITE(V12)
 	SetColors(activeGrpNr, currColNr[activeGrpNr]);
 }
 
+void SendStatusToBlynk()
+{
+	if (WiFi.status() != WL_CONNECTED)
+		return;
+
+	Serial.println("Blynk: sending current status");
+	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
+	Blynk.virtualWrite(V0, neoGroup->Active);
+	Blynk.virtualWrite(V1, globalBrightness);
+	Blynk.virtualWrite(V2, currFps[activeGrpNr]);
+	Blynk.virtualWrite(V3, currFxNr[activeGrpNr]);
+	Blynk.virtualWrite(V10, currColNr[activeGrpNr]);
+	Blynk.virtualWrite(V12, currentHue);
+}
+
 void BlynkSetup()
 {
 	BlynkParamAllocated colorNames(1024); // list length, in bytes
@@ -645,6 +660,8 @@ void BlynkSetup()
 	fxNames.add("Komet");
 	fxNames.add("Orbit");
 	Blynk.setProperty(V3, "labels", fxNames);
+
+	SendStatusToBlynk();
 }
 #pragma endregion
 
