@@ -367,25 +367,33 @@ std::vector<CRGB> CreateTeamColorPalette(String teamKey)
     DEBUG_PRINTLN("Team:" + teamKey + " -> " + WorldCupTeamNames.find(teamKey)->second);
 
     std::vector<CRGB> teamColors = WorldCupTeamColors.find(teamKey)->second;
-    return {
-        // LED_BLACK,
-        LED_GRAY_DARK,
-        BoostColor(teamColors.at(0)),
-        BoostColor(teamColors.at(1)),
-        BoostColor(teamColors.at(2)),
-        BoostColor(teamColors.at(3)),
-        BoostColor(teamColors.at(4)),
-        BoostColor(teamColors.at(5)),
-        LED_GRAY_MEDIUM,
-        // LED_BLACK,
-        LED_GRAY_DARK,
-        LED_GRAY_MEDIUM,
-        BoostColor(teamColors.at(5)),
-        BoostColor(teamColors.at(4)),
-        BoostColor(teamColors.at(3)),
-        BoostColor(teamColors.at(2)),
-        BoostColor(teamColors.at(1)),
-        BoostColor(teamColors.at(0))};
+        return {
+            LED_BLACK,
+            BoostColor(teamColors.at(0)),
+            BoostColor(teamColors.at(1)),
+            BoostColor(teamColors.at(2)),
+            BoostColor(teamColors.at(3)),
+            BoostColor(teamColors.at(4)),
+            BoostColor(teamColors.at(5))};
+    // return {
+    //     // LED_BLACK,
+    //     LED_GRAY_DARK,
+    //     BoostColor(teamColors.at(0)),
+    //     BoostColor(teamColors.at(1)),
+    //     BoostColor(teamColors.at(2)),
+    //     BoostColor(teamColors.at(3)),
+    //     BoostColor(teamColors.at(4)),
+    //     BoostColor(teamColors.at(5)),
+    //     LED_GRAY_MEDIUM,
+    //     // LED_BLACK,
+    //     LED_GRAY_DARK,
+    //     LED_GRAY_MEDIUM,
+    //     BoostColor(teamColors.at(5)),
+    //     BoostColor(teamColors.at(4)),
+    //     BoostColor(teamColors.at(3)),
+    //     BoostColor(teamColors.at(2)),
+    //     BoostColor(teamColors.at(1)),
+    //     BoostColor(teamColors.at(0))};
 }
 #pragma endregion
 

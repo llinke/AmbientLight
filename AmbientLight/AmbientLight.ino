@@ -397,7 +397,8 @@ void SetEffect(int grpNr, int fxNr,
 	case fxNrWave:
 		fxPatternName = "Wave";
 		fxPattern = pattern::WAVE;
-		fxMirror = mirror::MIRROR2;
+		fxDirection = direction::REVERSE;
+		fxMirror = mirror::MIRROR1; //MIRROR2;
 		// fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrDynamicWave:
@@ -417,9 +418,8 @@ void SetEffect(int grpNr, int fxNr,
 		fxPatternName = "Confetti";
 		fxPattern = pattern::CONFETTI;
 		fxGlitter = 0;
-		// Not in this case :-p
 		// fxFps /= 2; // half FPS looks better
-		// fxFpsFactor = 0.5; // half FPS looks better
+		fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrFade:
 		fxPatternName = "Fade";
@@ -433,7 +433,7 @@ void SetEffect(int grpNr, int fxNr,
 		fxWave = wave::EASEINOUT;
 		// fxWave = wave::SINUS;
 		// fxFps *= 3; //1.5; // faster FPS looks better
-		fxFpsFactor = 1.5; // faster FPS looks better
+		// fxFpsFactor = 1.5; // faster FPS looks better
 		fxMirror = mirror::MIRROR0;
 		// fxMirror = mirror::MIRROR2;
 		break;
@@ -443,7 +443,7 @@ void SetEffect(int grpNr, int fxNr,
 		// fxWave = wave::EASEINOUT;
 		fxWave = wave::SINUS;
 		// fxFps *= 1.5; // faster FPS looks better
-		fxFpsFactor = 1.5; // faster FPS looks better
+		// fxFpsFactor = 1.5; // faster FPS looks better
 		// fxMirror = mirror::MIRROR0;
 		fxMirror = mirror::MIRROR2;
 		break;
