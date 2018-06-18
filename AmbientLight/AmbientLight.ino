@@ -10,7 +10,7 @@
 // *** Compiler Flags
 // **************************************************
 // --- DEBUG ----------------------------------------
-#define ENABLE_SERIAL_DEBUG
+//#define ENABLE_SERIAL_DEBUG
 //#define DEBUG_LOOP
 // --- Demo --------- -------------------------------
 #define PLAY_DEMO true
@@ -85,6 +85,7 @@ std::vector<int> currFps;
 const int defaultGlitter = 0; //32;
 std::vector<int> currGlitter;
 uint8_t currentHue = HUE_AQUA;
+uint8_t currentSat = 255;
 
 //std::vector<NeoGroup *> neoGroups;
 std::vector<NeoGroup> neoGroups;
@@ -511,8 +512,8 @@ void SetColors(int grpNr, int colNr)
 		std::vector<CRGB> colors = ColorPalettes.find(palKey)->second;
 		if (colors == (std::vector<CRGB>)NULL)
 		{
-			DEBUG_PRINTLN("Col: Generating colours for hue " + String(currentHue) + " using method '" + palKey + "'.");
-			colors = GeneratePaletteFromHue(currentHue, palKey);
+			DEBUG_PRINTLN("Col: Generating colours for hue " + String(currentHue) + ", sat " + String(currentSat) + " using method '" + palKey + "'.");
+			colors = GeneratePaletteFromHue(palKey, currentHue, currentSat);
 		}
 		setGrpColors(grpNr, colors, true, true, CROSSFADE_PALETTES);
 	}
@@ -578,7 +579,9 @@ BLYNK_WRITE(V0)
 BLYNK_WRITE(V1)
 {
 	int pinValue = param.asInt();
+	pinValue = constrain(pinValue * 16, 16, 255);
 	DEBUG_PRINTLN("BLYNK V1: grp#" + String(activeGrpNr) + ", brightness => " + String(pinValue));
+
 	globalBrightness = pinValue;
 	FastLED.setBrightness(globalBrightness);
 }
@@ -587,8 +590,9 @@ BLYNK_WRITE(V1)
 BLYNK_WRITE(V2)
 {
 	int pinValue = param.asInt();
-	pinValue = constrain(pinValue, 10, 100);
+	pinValue = constrain(pinValue * 5, 10, 100);
 	DEBUG_PRINTLN("BLYNK V2: grp#" + String(activeGrpNr) + ", FPS => " + String(pinValue));
+
 	currFps.at(activeGrpNr) = pinValue;
 	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
 	neoGroup->ChangeFps(currFps.at(activeGrpNr));
@@ -600,16 +604,18 @@ BLYNK_WRITE(V3)
 	int pinValue = param.asInt();
 	pinValue = constrain(pinValue, 1, maxFxNr);
 	DEBUG_PRINTLN("BLYNK V3: grp#" + String(activeGrpNr) + ", FX => " + String(pinValue));
-	currFxNr[activeGrpNr] = pinValue;
-	SetEffect(activeGrpNr, currFxNr[activeGrpNr], true, false);
+
+	currFxNr.at(activeGrpNr) = pinValue;
+	SetEffect(activeGrpNr, currFxNr.at(activeGrpNr), true, false);
 }
 
-// V10 Colour DropDown
+// V10 Colour Palette DropDown
 BLYNK_WRITE(V10)
 {
 	int pinValue = param.asInt();
 	pinValue = constrain(pinValue, 1, ColorNames.size());
-	DEBUG_PRINTLN("BLYNK V10: grp#" + String(activeGrpNr) + ", color => " + String(pinValue));
+	DEBUG_PRINTLN("BLYNK V10: grp#" + String(activeGrpNr) + ", color palette #" + String(pinValue));
+
 	NextColor(pinValue);
 }
 
@@ -618,11 +624,12 @@ BLYNK_WRITE(V11)
 {
 	int pinValue = param.asInt();
 	DEBUG_PRINTLN("BLYNK V11: grp#" + String(activeGrpNr) + ", pinValue => " + String(pinValue));
-	if (pinValue == 0)
+
+	if (pinValue == 1)
 	{
 		DEBUG_PRINTLN("BLYNK V11: grp#" + String(activeGrpNr) + ", color => [NEXT]");
 		NextColor();
-		Blynk.virtualWrite(V10, currColNr[activeGrpNr]);
+		Blynk.virtualWrite(V10, currColNr.at(activeGrpNr));
 	}
 }
 
@@ -630,29 +637,48 @@ BLYNK_WRITE(V11)
 BLYNK_WRITE(V12)
 {
 	int pinValue = param.asInt();
+	pinValue = constrain(pinValue, 0, 255);
 	DEBUG_PRINTLN("BLYNK V12: grp#" + String(activeGrpNr) + ", hue => " + String(pinValue));
-	currentHue = constrain(pinValue, 0, 255);
-	SetColors(activeGrpNr, currColNr[activeGrpNr]);
+
+	currentHue = pinValue;
+	SetColors(activeGrpNr, currColNr.at(activeGrpNr));
 }
 
-void SendStatusToBlynk()
+// V13 Saturation
+BLYNK_WRITE(V13)
+{
+	int pinValue = param.asInt();
+	pinValue = constrain(pinValue * 16, 0, 255);
+	DEBUG_PRINTLN("BLYNK V13: grp#" + String(activeGrpNr) + ", sat => " + String(pinValue));
+
+	currentSat = pinValue;
+	SetColors(activeGrpNr, currColNr.at(activeGrpNr));
+}
+
+BLYNK_CONNECTED()
+{
+	DEBUG_PRINTLN("Blynk connected: synchonizing values from cloud");
+	Blynk.syncAll();
+}
+
+BLYNK_APP_CONNECTED()
+{
+	DEBUG_PRINTLN("Blynk app connected: updating app with current values");
+	SendStatusToBlynkApp();
+}
+
+BLYNK_APP_DISCONNECTED()
+{
+	DEBUG_PRINTLN("Blynk app disconnected");
+}
+
+void SendStatusToBlynkApp()
 {
 	if (WiFi.status() != WL_CONNECTED)
 		return;
 
-	Serial.println("Blynk: sending current status");
-	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
-	Blynk.virtualWrite(V0, neoGroup->Active);
-	Blynk.virtualWrite(V1, globalBrightness);
-	Blynk.virtualWrite(V2, currFps[activeGrpNr]);
-	Blynk.virtualWrite(V3, currFxNr[activeGrpNr]);
-	Blynk.virtualWrite(V10, currColNr[activeGrpNr]);
-	Blynk.virtualWrite(V12, currentHue);
-}
-
-void BlynkSetup()
-{
-	BlynkParamAllocated colorNames(1024); // list length, in bytes
+	DEBUG_PRINTLN("Blynk: sending labels to app");
+	BlynkParamAllocated colorNames(BLYNK_MAX_SENDBYTES); // list length, in bytes
 	for (int cNr = 0; cNr < ColorNames.size(); cNr++)
 	{
 		colorNames.add(ColorNames.at(cNr));
@@ -669,7 +695,37 @@ void BlynkSetup()
 	fxNames.add("Orbit");
 	Blynk.setProperty(V3, "labels", fxNames);
 
-	SendStatusToBlynk();
+	DEBUG_PRINTLN("Blynk: sending current values to app");
+	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
+	Blynk.virtualWrite(V0, neoGroup->Active);
+	Blynk.virtualWrite(V1, (uint8_t)((globalBrightness + 1) / 16));
+	Blynk.virtualWrite(V2, (uint8_t)(currFps.at(activeGrpNr) / 5));
+	Blynk.virtualWrite(V3, currFxNr.at(activeGrpNr));
+	Blynk.virtualWrite(V10, currColNr.at(activeGrpNr));
+	Blynk.virtualWrite(V12, (uint8_t)currentHue);
+	Blynk.virtualWrite(V13, (uint8_t)((currentSat + 1) / 16));
+}
+
+void BlynkSetup()
+{
+	// BlynkParamAllocated colorNames(BLYNK_MAX_SENDBYTES); // list length, in bytes
+	// for (int cNr = 0; cNr < ColorNames.size(); cNr++)
+	// {
+	// 	colorNames.add(ColorNames.at(cNr));
+	// }
+	// Blynk.setProperty(V10, "labels", colorNames);
+
+	// BlynkParamAllocated fxNames(1024); // list length, in bytes
+	// fxNames.add("Welle");
+	// fxNames.add("Dynamisch");
+	// fxNames.add("Rauschen");
+	// fxNames.add("Konfetti");
+	// fxNames.add("Blenden");
+	// fxNames.add("Komet");
+	// fxNames.add("Orbit");
+	// Blynk.setProperty(V3, "labels", fxNames);
+
+	// SendStatusToBlynk();
 }
 #pragma endregion
 

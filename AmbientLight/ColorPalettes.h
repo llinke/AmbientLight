@@ -257,57 +257,60 @@ std::vector<CRGB> SimplePaletteFromColor(
 }
 
 std::vector<CRGB> AdjacentPaletteFromHue(
-    uint8_t hue, bool addCompl = false, uint8_t distance = 30)
+    uint8_t hue, uint8_t sat,
+    bool addCompl = false, uint8_t distance = 30)
 {
     uint8_t dist8 = (255 * distance) / 360;
     std::vector<CRGB> newPal;
-    CHSV hsvBase = CHSV(hue, 255, 255);
+    CHSV hsvBase = CHSV(hue, sat, 255);
     newPal.push_back(CRGB(hsvBase)); // base color
-    CHSV hsvNew = CHSV(hue + dist8, 255, 255);
+    CHSV hsvNew = CHSV(hue + dist8, sat, 255);
     newPal.push_back(CRGB(hsvNew)); // right adjacent
     if (addCompl)
     {
-        hsvNew = CHSV(hue - 128, 255, 255);
+        hsvNew = CHSV(hue - 128, sat, 255);
         newPal.push_back(CRGB(hsvNew)); // complementary
     }
     else
     {
         newPal.push_back(CRGB(hsvBase)); // base color
     }
-    hsvNew = CHSV(hue - dist8, 255, 255);
+    hsvNew = CHSV(hue - dist8, sat, 255);
     newPal.push_back(CRGB(hsvNew)); // left adjacent
     return newPal;
 }
 
 std::vector<CRGB> TriadPaletteFromHue(
-    uint8_t hue, bool addCompl = false, uint8_t distance = 30)
+    uint8_t hue, uint8_t sat,
+    bool addCompl = false, uint8_t distance = 30)
 {
     return AdjacentPaletteFromHue(hue, distance + 90, addCompl);
 }
 
 std::vector<CRGB> AnalogousPaletteFromHue(
-    uint8_t hue, bool addCompl = false, uint8_t distance = 15)
+    uint8_t hue, uint8_t sat,
+    bool addCompl = false, uint8_t distance = 15)
 {
     uint8_t dist8 = (255 * distance) / 360;
     std::vector<CRGB> newPal;
-    CHSV hsvBase = CHSV(hue, 255, 255);
+    CHSV hsvBase = CHSV(hue, sat, 255);
     newPal.push_back(CRGB(hsvBase)); // base color
-    CHSV hsvNew = CHSV(hue - dist8, 255, 255);
+    CHSV hsvNew = CHSV(hue - dist8, sat, 255);
     newPal.push_back(CRGB(hsvNew)); // first left analogous
-    hsvNew = CHSV(hue - 2 * dist8, 255, 255);
+    hsvNew = CHSV(hue - 2 * dist8, sat, 255);
     newPal.push_back(CRGB(hsvNew)); // second left analogous
     if (addCompl)
     {
-        hsvNew = CHSV(hue - 128, 255, 255);
+        hsvNew = CHSV(hue - 128, sat, 255);
         newPal.push_back(CRGB(hsvNew)); // complementary
     }
     else
     {
         newPal.push_back(CRGB(hsvBase)); // base color
     }
-    hsvNew = CHSV(hue + 2 * dist8, 255, 255);
+    hsvNew = CHSV(hue + 2 * dist8, sat, 255);
     newPal.push_back(CRGB(hsvNew)); // second right analogous
-    hsvNew = CHSV(hue + dist8, 255, 255);
+    hsvNew = CHSV(hue + dist8, sat, 255);
     newPal.push_back(CRGB(hsvNew)); // first right analogous
     if (addCompl)
     {
@@ -317,25 +320,26 @@ std::vector<CRGB> AnalogousPaletteFromHue(
     return newPal;
 }
 
-std::vector<CRGB> GeneratePaletteFromHue(uint8_t hue, String method)
+std::vector<CRGB> GeneratePaletteFromHue(
+    String method, uint8_t hue, uint8_t sat)
 {
     if (method == "Statisch")
-        return {(CHSV(hue, 255, 255))};
+        return {(CHSV(hue, sat, 255))};
     if (method == "Analogous")
-        return AnalogousPaletteFromHue(hue);
+        return AnalogousPaletteFromHue(hue, sat);
     if (method == "Analogous Complement")
-        return AnalogousPaletteFromHue(hue, true);
+        return AnalogousPaletteFromHue(hue, sat, true);
     if (method == "Adjacent")
-        return AdjacentPaletteFromHue(hue);
+        return AdjacentPaletteFromHue(hue, sat);
     if (method == "Adjacent Complement")
-        return AdjacentPaletteFromHue(hue, true);
+        return AdjacentPaletteFromHue(hue, sat, true);
     if (method == "Triad")
-        return TriadPaletteFromHue(hue);
+        return TriadPaletteFromHue(hue, sat);
     if (method == "Triad Complement")
-        return TriadPaletteFromHue(hue, true);
+        return TriadPaletteFromHue(hue, sat, true);
 
-    return SimplePaletteFromColor(CHSV(hue, 255, 255), 1, 32);
-    // return {(CHSV(hue, 255, 255))};
+    return SimplePaletteFromColor(CHSV(hue, sat, 255), 1, 32);
+    // return {(CHSV(hue, sat, 255))};
 }
 
 // const std::map<String, uint8_t> HueValues =
@@ -367,14 +371,14 @@ std::vector<CRGB> CreateTeamColorPalette(String teamKey)
     DEBUG_PRINTLN("Team:" + teamKey + " -> " + WorldCupTeamNames.find(teamKey)->second);
 
     std::vector<CRGB> teamColors = WorldCupTeamColors.find(teamKey)->second;
-        return {
-            LED_BLACK,
-            BoostColor(teamColors.at(0)),
-            BoostColor(teamColors.at(1)),
-            BoostColor(teamColors.at(2)),
-            BoostColor(teamColors.at(3)),
-            BoostColor(teamColors.at(4)),
-            BoostColor(teamColors.at(5))};
+    return {
+        LED_BLACK,
+        BoostColor(teamColors.at(0)),
+        BoostColor(teamColors.at(1)),
+        BoostColor(teamColors.at(2)),
+        BoostColor(teamColors.at(3)),
+        BoostColor(teamColors.at(4)),
+        BoostColor(teamColors.at(5))};
     // return {
     //     // LED_BLACK,
     //     LED_GRAY_DARK,
@@ -407,25 +411,25 @@ void InitColorPalettes()
     //     String hueName = HuesNames[h];
     //     uint8_t hue = HueValues.at(hueName);
     //     /*
-    //     //AddColorPalette(""/*"Adjacent_" + String(hue), AdjacentPaletteFromHue(hue), false);
-    //     //AddColorPalette(""/*"Triad_" + String(hue), TriadPaletteFromHue(hue), false);
-    //     AddColorPalette(""/*"Analogous_" + String(hue), AnalogousPaletteFromHue(hue), false);
-    //     //AddColorPalette(""/*"Adjacent_" + String(hue) + "_C", AdjacentPaletteFromHue(hue, true), false);
-    //     //AddColorPalette(""/*"Triad_" + String(hue) + "_C", TriadPaletteFromHue(hue, true), false);
-    //     AddColorPalette(""/*"Analogous" + String(hue) + "_C", AnalogousPaletteFromHue(hue, true), false);
+    //     //AddColorPalette(""/*"Adjacent_" + String(hue), AdjacentPaletteFromHue(hue, 255), false);
+    //     //AddColorPalette(""/*"Adjacent_" + String(hue) + "_C", AdjacentPaletteFromHue(hue, 255, true), false);
+    //     //AddColorPalette(""/*"Triad_" + String(hue), TriadPaletteFromHue(hue, 255), false);
+    //     //AddColorPalette(""/*"Triad_" + String(hue) + "_C", TriadPaletteFromHue(hue, 255, true), false);
+    //     AddColorPalette(""/*"Analogous_" + String(hue), AnalogousPaletteFromHue(hue, 255), false);
+    //     AddColorPalette(""/*"Analogous" + String(hue) + "_C", AnalogousPaletteFromHue(hue, 255, true), false);
     //     */
-    //     AddColorPalette(hueName, AnalogousPaletteFromHue(hue), false);
-    //     AddColorPalette(hueName + "+", AnalogousPaletteFromHue(hue, true), false);
+    //     AddColorPalette(hueName, AnalogousPaletteFromHue(hue, 255), false);
+    //     AddColorPalette(hueName + "+", AnalogousPaletteFromHue(hue, 255, true), false);
     // }
 
     // Placeholders for dynamic palettes from hue
-    AddColorPalette("Statisch", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue)*/, false);
-    AddColorPalette("Analogous", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue)*/, false);
-    AddColorPalette("Analogous Complement", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, true)*/, false);
-    AddColorPalette("Adjacent", (std::vector<CRGB>)NULL /*AdjacentPaletteFromHue(hue)*/, false);
-    AddColorPalette("Adjacent Complement", (std::vector<CRGB>)NULL /*AdjacentPaletteFromHue(hue, true)*/, false);
-    AddColorPalette("Triad", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue)*/, false);
-    AddColorPalette("Triad Complement", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue, true)*/, false);
+    AddColorPalette("Statisch", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255)*/, false);
+    AddColorPalette("Analogous", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255)*/, false);
+    AddColorPalette("Analogous Complement", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255, true)*/, false);
+    AddColorPalette("Adjacent", (std::vector<CRGB>)NULL /*AdjacentPaletteFromHue(hue, 255)*/, false);
+    AddColorPalette("Adjacent Complement", (std::vector<CRGB>)NULL /*AdjacentPaletteFromHue(hue, 255, true)*/, false);
+    AddColorPalette("Triad", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue, 255)*/, false);
+    AddColorPalette("Triad Complement", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue, 255, true)*/, false);
 
     // World Cup 2018
     for (int teamNr = 0; teamNr < WorldCupTeamKeys.size(); teamNr++)
