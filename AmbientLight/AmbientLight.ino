@@ -399,7 +399,7 @@ void SetEffect(int grpNr, int fxNr,
 		fxPatternName = "Wave";
 		fxPattern = pattern::WAVE;
 		fxDirection = direction::REVERSE;
-		fxMirror = mirror::MIRROR1; //MIRROR2;
+		fxMirror = mirror::MIRROR1;
 		// fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrDynamicWave:
@@ -435,8 +435,7 @@ void SetEffect(int grpNr, int fxNr,
 		// fxWave = wave::SINUS;
 		// fxFps *= 3; //1.5; // faster FPS looks better
 		// fxFpsFactor = 1.5; // faster FPS looks better
-		fxMirror = mirror::MIRROR0;
-		// fxMirror = mirror::MIRROR2;
+		fxMirror = mirror::MIRROR1;
 		break;
 	case fxNrOrbit:
 		fxPatternName = "Orbit";
@@ -445,8 +444,8 @@ void SetEffect(int grpNr, int fxNr,
 		fxWave = wave::SINUS;
 		// fxFps *= 1.5; // faster FPS looks better
 		// fxFpsFactor = 1.5; // faster FPS looks better
-		// fxMirror = mirror::MIRROR0;
-		fxMirror = mirror::MIRROR2;
+		fxMirror = mirror::MIRROR0;
+		// fxMirror = mirror::MIRROR1;
 		break;
 	case fxNrFill:
 		fxPatternName = "Fill";

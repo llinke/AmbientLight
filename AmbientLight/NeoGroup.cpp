@@ -76,9 +76,9 @@ enum direction
 
 enum mirror
 {
-	MIRROR0,
-	MIRROR1,
-	MIRROR2
+	MIRROR0, // no mirroring
+	MIRROR1, // set even/odd as mirror values
+	MIRROR2  // mirror each second value
 };
 #pragma endregion
 
