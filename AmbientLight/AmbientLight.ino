@@ -37,6 +37,7 @@
 #include <DNSServer.h>		  //Local DNS Server used for redirecting all requests to the configuration portal
 #include <ESP8266WebServer.h> //Local WebServer used to serve the configuration portal
 #include <WiFiManager.h>	  //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+#include <ESP8266mDNS.h>
 
 // **************************************************
 // *** Blynk
@@ -51,7 +52,8 @@ char auth[] = "eb5f226404904fefb522f6c3b5f60fa2";
 // **************************************************
 // *** Variable and Constamts  Declarations
 // **************************************************
-const String wifiApName = "AP_AmbientLight";
+const String wifiApName = "AmbiLightESP";
+const String wifiDnsName = "AmbiLightESP";
 const int ConfigureAPTimeout = 300;
 
 volatile uint8_t globalBrightness = 128;
@@ -94,12 +96,30 @@ std::vector<NeoGroup> neoGroups;
 // *** Helper methods
 // **************************************************
 #pragma region Helper Methods
+void registerMDns()
+{
+
+	if (!MDNS.begin(wifiDnsName.c_str()))
+	{
+		DEBUG_PRINTLN("mDNS: Error setting up MDNS responder!");
+	}
+	else
+	{
+		DEBUG_PRINTLN("mDNS: responder started");
+	}
+}
+
 bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 {
 	DEBUG_PRINTLN("WIFI ------------------------------------------------------");
+
+	DEBUG_PRINTLN("WiFi: setting host name to '" + wifiDnsName + "'...");
+	WiFi.hostname(wifiDnsName.c_str());
+
 	if (!forceReconnect && WiFi.status() == WL_CONNECTED)
 	{
-		DEBUG_PRINTLN("WiFi: already connected...");
+		registerMDns();
+		DEBUG_PRINTLN("WiFi: device '" + WiFi.hostname() + "' already connected...");
 		return true; // Is already connected...
 	}
 
@@ -130,6 +150,9 @@ bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 	//or use this for auto generated name ESP + ChipID
 	//wifiManager.autoConnect();
 	//if you get here you have connected to the WiFi
+
+	registerMDns();
+
 	if (ledsInitialized)
 	{
 		fill_solid(leds, PIXEL_COUNT, connected ? CRGB::Green : CRGB::Red);
@@ -137,7 +160,7 @@ bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 	}
 	if (connected)
 	{
-		DEBUG_PRINTLN("Wifi is connected...yay!!!");
+		DEBUG_PRINTLN("Wifi is connected for device '" + WiFi.hostname() + "'...yay!!!");
 	}
 	else
 	{
@@ -391,6 +414,7 @@ void SetEffect(int grpNr, int fxNr,
 	double fxFpsFactor = 1.0;
 	mirror fxMirror = MIRROR0;
 	wave fxWave = wave::LINEAR;
+	int fxSpeed = speed;
 
 	NeoGroup *neoGroup = &(neoGroups.at(grpNr));
 	switch (fxNr)
@@ -400,7 +424,7 @@ void SetEffect(int grpNr, int fxNr,
 		fxPattern = pattern::WAVE;
 		fxDirection = direction::REVERSE;
 		fxMirror = mirror::MIRROR1;
-		// fxFpsFactor = 0.5; // half FPS looks better
+		fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrDynamicWave:
 		fxPatternName = "Dynamic Wave";
@@ -420,7 +444,7 @@ void SetEffect(int grpNr, int fxNr,
 		fxPattern = pattern::CONFETTI;
 		fxGlitter = 0;
 		// fxFps /= 2; // half FPS looks better
-		fxFpsFactor = 0.5; // half FPS looks better
+		// fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrFade:
 		fxPatternName = "Fade";
@@ -444,6 +468,7 @@ void SetEffect(int grpNr, int fxNr,
 		fxWave = wave::SINUS;
 		// fxFps *= 1.5; // faster FPS looks better
 		// fxFpsFactor = 1.5; // faster FPS looks better
+		fxFpsFactor = 0.5; // half FPS looks better
 		fxMirror = mirror::MIRROR0;
 		// fxMirror = mirror::MIRROR1;
 		break;
@@ -453,6 +478,7 @@ void SetEffect(int grpNr, int fxNr,
 		fxWave = wave::EASEINOUT;
 		// fxFps *= 1.5; // faster FPS looks better
 		fxFpsFactor = 1.5; // faster FPS looks better
+		fxFpsFactor = 0.5; // half FPS looks better
 		// fxMirror = mirror::MIRROR0;
 		fxMirror = mirror::MIRROR2;
 		break;
@@ -473,7 +499,7 @@ void SetEffect(int grpNr, int fxNr,
 		fxDirection,
 		fxMirror,
 		fxWave,
-		speed,
+		fxSpeed,
 		fxFpsFactor);
 	if (startFx)
 		startGroup(grpNr, onlyOnce);

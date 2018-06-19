@@ -374,7 +374,8 @@ std::vector<CRGB> CreateTeamColorPalette(String teamKey)
 
     std::vector<CRGB> teamColors = WorldCupTeamColors.find(teamKey)->second;
     std::vector<CRGB> teamPalette = {};
-    teamPalette.push_back(LED_BLACK);
+    // teamPalette.push_back(LED_BLACK);
+    teamPalette.push_back(LED_GRAY_DARK);
     for (int tc = 0; tc < teamColors.size(); tc++)
     {
         teamPalette.push_back(BoostColor(teamColors.at(tc)));
