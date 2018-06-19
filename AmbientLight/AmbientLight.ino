@@ -115,7 +115,6 @@ void udpUpdateLed(int id, byte r, byte g, byte b)
 #pragma region Helper Methods
 void registerMDns()
 {
-
 	if (!MDNS.begin(wifiDnsName.c_str()))
 	{
 		DEBUG_PRINTLN("mDNS: Error setting up MDNS responder!");
@@ -168,13 +167,6 @@ bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 	//wifiManager.autoConnect();
 	//if you get here you have connected to the WiFi
 
-	registerMDns();
-
-	if (ledsInitialized)
-	{
-		fill_solid(leds, PIXEL_COUNT, connected ? CRGB::Green : CRGB::Red);
-		FastLED.show();
-	}
 	if (connected)
 	{
 		DEBUG_PRINTLN("Wifi is connected for device '" + WiFi.hostname() + "'...yay!!!");
@@ -184,10 +176,18 @@ bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 		DEBUG_PRINTLN("!!! WIFI NOT CONNECTED !!!");
 	}
 
+	if (ledsInitialized)
+	{
+		fill_solid(leds, PIXEL_COUNT, connected ? CRGB::Green : CRGB::Red);
+		FastLED.show();
+	}
+
 	delay(5000);
 
 	if (connected)
 	{
+		registerMDns();
+
 		DEBUG_PRINTLN("UDP: initializing UDP listener.");
 		udpLed = WrapperUdpLed(PIXEL_COUNT, udpLedPort);
 		udpLed.onUpdateLed(udpUpdateLed);
@@ -261,7 +261,7 @@ int initStrip(bool doStart = false, bool playDemo = true)
 		FastLED.show();
 	}
 
-	InitWifi();
+	InitWifi(false); // do not use timeout, wait at WiFi config if not connected
 
 	neoGroups.clear();
 	// DEBUG_PRINTLN("Adding special groups.");
@@ -814,8 +814,6 @@ void setup()
 
 	DEBUG_PRINTLN("BOOT/SETUP ------------------------------------------------");
 	DEBUG_PRINTLN("Setup: Setting up AmbientLight for Arduino.");
-
-	//InitWifi();
 
 	DEBUG_PRINTLN("FastLED: Initializing color palettes.");
 	InitColorNames();
