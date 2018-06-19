@@ -58,9 +58,11 @@ const String wifiApName = "AmbiLightESP";
 const String wifiDnsName = "AmbiLightESP";
 const int ConfigureAPTimeout = 300;
 
+bool isInitializing = true;
+
 WrapperUdpLed udpLed;
 uint16_t udpLedPort = 19446;
-bool isUdpActive = false;
+bool isAmbilightActive = false;
 
 volatile uint8_t globalBrightness = 128;
 
@@ -81,9 +83,8 @@ const uint8_t fxNrConfetti = 4;
 const uint8_t fxNrFade = 5;
 const uint8_t fxNrComet = 6;
 const uint8_t fxNrOrbit = 7;
-const uint8_t fxNrHyperion = 8;
-const uint8_t fxNrFill = 9;
-const int maxFxNr = 8;
+const uint8_t fxNrFill = 8;
+const int maxFxNr = 7;
 const int defaultFxNr = fxNrWave;
 std::vector<int> currFxNr;
 int maxColNr = 1;			// will be dynamically assigned once palettes are generated
@@ -101,7 +102,7 @@ std::vector<NeoGroup> neoGroups;
 
 void udpUpdateLed(int id, byte r, byte g, byte b)
 {
-	if (isUdpActive)
+	if (isAmbilightActive)
 	{
 		NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
 		neoGroup->SetPixel(id, CRGB(r, g, b));
@@ -190,6 +191,7 @@ bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 		DEBUG_PRINTLN("UDP: initializing UDP listener.");
 		udpLed = WrapperUdpLed(PIXEL_COUNT, udpLedPort);
 		udpLed.onUpdateLed(udpUpdateLed);
+		udpLed.begin();
 	}
 
 	return connected;
@@ -277,6 +279,8 @@ int initStrip(bool doStart = false, bool playDemo = true)
 	}
 	activeGrpNr = 0;
 
+	isInitializing = false;
+
 	return doStart ? startStrip() : PIXEL_COUNT;
 }
 
@@ -293,7 +297,7 @@ int stopStrip()
 {
 	ledsStarted = false;
 
-	for (int i = 2; i < neoGroups.size(); i++)
+	for (int i = 0; i < neoGroups.size(); i++)
 	{
 		NeoGroup *neoGroup = &(neoGroups.at(i));
 		neoGroup->Stop(true);
@@ -440,9 +444,6 @@ void SetEffect(int grpNr, int fxNr,
 	wave fxWave = wave::LINEAR;
 	int fxSpeed = speed;
 
-	bool stopFxGroup = false;
-	bool stopFxHyperion = true;
-
 	NeoGroup *neoGroup = &(neoGroups.at(grpNr));
 	switch (fxNr)
 	{
@@ -499,14 +500,6 @@ void SetEffect(int grpNr, int fxNr,
 		fxMirror = mirror::MIRROR0;
 		// fxMirror = mirror::MIRROR1;
 		break;
-	case fxNrHyperion:
-		fxPatternName = "Hyperion";
-		stopFxGroup = true;
-		stopFxHyperion = false;
-		DEBUG_PRINTLN("Fx: starting UDP listener.");
-		udpLed.begin();
-		isUdpActive = true;
-		break;
 	case fxNrFill:
 		fxPatternName = "Fill";
 		fxPattern = pattern::FILL;
@@ -524,36 +517,23 @@ void SetEffect(int grpNr, int fxNr,
 		break;
 	}
 
-	DEBUG_PRINTLN("Fx: Setting pattern " + fxPatternName + " for group #" + String(grpNr) + ".");
+	DEBUG_PRINTLN("Fx: Changing effect to '" + String(fxPatternName) + "'.");
+	if (targetFps > 0)
+		fxFps = targetFps;
+	setGrpEffect(
+		grpNr,
+		fxPattern,
+		fxGlitter,
+		fxFps,
+		fxDirection,
+		fxMirror,
+		fxWave,
+		fxSpeed,
+		fxFpsFactor);
 
-	if (stopFxHyperion && isUdpActive)
+	if (startFx && !isAmbilightActive)
 	{
-		DEBUG_PRINTLN("Fx: stopping UDP listener.");
-		isUdpActive = false;
-		udpLed.stop();
-	}
-
-	if (stopFxGroup)
-	{
-		stopGroup(grpNr, true);
-	}
-	else
-	{
-		if (targetFps > 0)
-			fxFps = targetFps;
-		DEBUG_PRINTLN("Fx: Changing effect to '" + String(fxPatternName) + "'.");
-		setGrpEffect(
-			grpNr,
-			fxPattern,
-			fxGlitter,
-			fxFps,
-			fxDirection,
-			fxMirror,
-			fxWave,
-			fxSpeed,
-			fxFpsFactor);
-		if (startFx)
-			startGroup(grpNr, onlyOnce);
+		startGroup(grpNr, onlyOnce);
 	}
 	DEBUG_PRINTLN("SetEffect ---------------------------------------------------");
 }
@@ -640,6 +620,12 @@ void NextColor(int nextCol = -1)
 // V0 In/Off
 BLYNK_WRITE(V0)
 {
+	if (isInitializing)
+	{
+		DEBUG_PRINTLN("BLYNK V0: grp#" + String(activeGrpNr) + ", on/off => ignored during init phase.");
+		return;
+	}
+
 	int pinValue = param.asInt();
 	DEBUG_PRINTLN("BLYNK V0: grp#" + String(activeGrpNr) + ", on/off => " + String(pinValue));
 	if (pinValue == 0)
@@ -684,6 +670,30 @@ BLYNK_WRITE(V3)
 
 	currFxNr.at(activeGrpNr) = pinValue;
 	SetEffect(activeGrpNr, currFxNr.at(activeGrpNr), true, false);
+}
+
+// V4 Ambilight On/Off
+BLYNK_WRITE(V4)
+{
+	if (isInitializing)
+	{
+		DEBUG_PRINTLN("BLYNK V4: Ambilight => ignored during init phase.");
+		return;
+	}
+
+	int pinValue = param.asInt();
+	pinValue = constrain(pinValue, 0, 1);
+	DEBUG_PRINTLN("BLYNK V4: Ambilight => " + String(pinValue));
+
+	isAmbilightActive = (pinValue == 1);
+	if (isAmbilightActive)
+	{
+		stopGroup(activeGrpNr, false); // no immediate stop, fade out
+	}
+	else
+	{
+		startGroup(activeGrpNr, false); // no runOnlyOnce
+	}
 }
 
 // V10 Colour Palette DropDown
@@ -775,35 +785,22 @@ void SendStatusToBlynkApp()
 
 	DEBUG_PRINTLN("Blynk: sending current values to app");
 	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
-	Blynk.virtualWrite(V0, neoGroup->Active);
-	Blynk.virtualWrite(V1, (uint8_t)((globalBrightness + 1) / 16));
-	Blynk.virtualWrite(V2, (uint8_t)(currFps.at(activeGrpNr) / 5));
-	Blynk.virtualWrite(V3, currFxNr.at(activeGrpNr));
-	Blynk.virtualWrite(V10, currColNr.at(activeGrpNr));
-	Blynk.virtualWrite(V12, (uint8_t)currentHue);
-	Blynk.virtualWrite(V13, (uint8_t)((currentSat + 1) / 16));
+	Blynk.virtualWrite(V0, neoGroup->Active);						// FX on/off
+	Blynk.virtualWrite(V1, (uint8_t)((globalBrightness + 1) / 16)); // Brightness
+	Blynk.virtualWrite(V2, (uint8_t)(currFps.at(activeGrpNr) / 5)); // FPS
+	Blynk.virtualWrite(V3, currFxNr.at(activeGrpNr));				// FX Nr
+	Blynk.virtualWrite(V4, isAmbilightActive);						// Ambilight on/off
+	Blynk.virtualWrite(V10, currColNr.at(activeGrpNr));				// Color Palette
+	Blynk.virtualWrite(V12, (uint8_t)currentHue);					// Custom Color Hue
+	Blynk.virtualWrite(V13, (uint8_t)((currentSat + 1) / 16));		// Custom Color Sat
 }
 
 void BlynkSetup()
 {
-	// BlynkParamAllocated colorNames(BLYNK_MAX_SENDBYTES); // list length, in bytes
-	// for (int cNr = 0; cNr < ColorNames.size(); cNr++)
-	// {
-	// 	colorNames.add(ColorNames.at(cNr));
-	// }
-	// Blynk.setProperty(V10, "labels", colorNames);
+	Blynk.config(auth);
+	Blynk.connect();
 
-	// BlynkParamAllocated fxNames(1024); // list length, in bytes
-	// fxNames.add("Welle");
-	// fxNames.add("Dynamisch");
-	// fxNames.add("Rauschen");
-	// fxNames.add("Konfetti");
-	// fxNames.add("Blenden");
-	// fxNames.add("Komet");
-	// fxNames.add("Orbit");
-	// Blynk.setProperty(V3, "labels", fxNames);
-
-	// SendStatusToBlynk();
+	// SendStatusToBlynkApp();
 }
 #pragma endregion
 
@@ -851,9 +848,6 @@ void setup()
 
 	DEBUG_PRINT("FastLED: Active group #" + String(activeGrpNr));
 
-	Blynk.config(auth);
-	Blynk.connect();
-
 	BlynkSetup();
 }
 #pragma endregion
@@ -877,12 +871,15 @@ void loop()
 	}
 
 	bool ledsUpdated = false;
-	if (isUdpActive)
+	if (isAmbilightActive)
 	{
-		ledsUpdated |= udpLed.handle();
-		if (ledsUpdated)
+		if (!isGroupFadingOut(activeGrpNr)) // Do not handle while FX is fading out
 		{
-			DEBUG_PRINTLN("UDP: ambilight data received.");
+			ledsUpdated |= udpLed.handle();
+			if (ledsUpdated)
+			{
+				DEBUG_PRINTLN("UDP: ambilight data received.");
+			}
 		}
 	}
 	else
