@@ -54,8 +54,8 @@ char auth[] = "eb5f226404904fefb522f6c3b5f60fa2";
 // **************************************************
 // *** Variable and Constamts  Declarations
 // **************************************************
-const String wifiApName = "AmbiLightESP";
-const String wifiDnsName = "AmbiLightESP";
+const String wifiApName = "Ambilight_AP";
+const String wifiDnsName = "AmbilightESP";
 const int ConfigureAPTimeout = 300;
 
 bool isInitializing = true;
@@ -132,50 +132,46 @@ bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 	DEBUG_PRINTLN("WiFi: setting host name to '" + wifiDnsName + "'...");
 	WiFi.hostname(wifiDnsName.c_str());
 
-	if (!forceReconnect && WiFi.status() == WL_CONNECTED)
-	{
-		registerMDns();
-		DEBUG_PRINTLN("WiFi: device '" + WiFi.hostname() + "' already connected...");
-		return true; // Is already connected...
-	}
-
-	if (ledsInitialized)
-	{
-		FastLED.clear(true);
-		fill_solid(leds, PIXEL_COUNT, CRGB::Blue);
-		FastLED.show();
-	}
-	delay(2500);
-	//WiFiManager
-	WiFiManager wifiManager;
-	if (forceReconnect)
-	{
-		wifiManager.resetSettings();
-	}
-	//wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
-	//fetches ssid and pass from eeprom and tries to connect
-	//if it does not connect it starts an access point with the specified name
-	//here  "AutoConnectAP" and goes into a blocking loop awaiting configuration
-	DEBUG_PRINTLN("WiFi Manager trying to connect...");
-	if (useWifiCfgTimeout)
-	{
-		DEBUG_PRINTLN("You have " + String(ConfigureAPTimeout) + " seconds for configuration if required.");
-		wifiManager.setConfigPortalTimeout(ConfigureAPTimeout);
-	}
-	bool connected = wifiManager.autoConnect(wifiApName.c_str());
-	//or use this for auto generated name ESP + ChipID
-	//wifiManager.autoConnect();
-	//if you get here you have connected to the WiFi
-
+	bool connected = (!forceReconnect && WiFi.status() == WL_CONNECTED);
 	if (connected)
 	{
-		DEBUG_PRINTLN("Wifi is connected for device '" + WiFi.hostname() + "'...yay!!!");
+		DEBUG_PRINTLN("WiFi: device '" + WiFi.hostname() + "' already connected...");
 	}
 	else
 	{
-		DEBUG_PRINTLN("!!! WIFI NOT CONNECTED !!!");
+		if (ledsInitialized)
+		{
+			FastLED.clear(true);
+			fill_solid(leds, PIXEL_COUNT, CRGB::Blue);
+			FastLED.show();
+		}
+		delay(2500);
+		//WiFiManager
+		WiFiManager wifiManager;
+		if (forceReconnect)
+		{
+			wifiManager.resetSettings();
+		}
+		//wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
+		//fetches ssid and pass from eeprom and tries to connect
+		//if it does not connect it starts an access point with the specified name
+		//here  "AutoConnectAP" and goes into a blocking loop awaiting configuration
+		DEBUG_PRINTLN("WiFi Manager trying to connect...");
+		if (useWifiCfgTimeout)
+		{
+			DEBUG_PRINTLN("You have " + String(ConfigureAPTimeout) + " seconds for configuration if required.");
+			wifiManager.setConfigPortalTimeout(ConfigureAPTimeout);
+		}
+		connected = wifiManager.autoConnect(wifiApName.c_str());
+		//or use this for auto generated name ESP + ChipID
+		//wifiManager.autoConnect();
+		//if you get here you have connected to the WiFi
 	}
 
+	DEBUG_PRINTLN(
+		connected
+			? "Wifi is connected for device '" + WiFi.hostname() + "' with IP " + WiFi.localIP().toString() + "...yay!!!"
+			: "!!! WIFI NOT CONNECTED !!!");
 	if (ledsInitialized)
 	{
 		fill_solid(leds, PIXEL_COUNT, connected ? CRGB::Green : CRGB::Red);
