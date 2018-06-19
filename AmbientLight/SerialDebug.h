@@ -1,3 +1,5 @@
+#ifndef SerialDebug_h
+#define SerialDebug_h
 
 // **************************************************
 // *** Serial Debugging
@@ -20,4 +22,6 @@
 #define DEBUG_PRINTLN(...) \
     {                      \
     }
+#endif
+
 #endif

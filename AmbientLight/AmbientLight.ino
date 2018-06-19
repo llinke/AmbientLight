@@ -10,7 +10,7 @@
 // *** Compiler Flags
 // **************************************************
 // --- DEBUG ----------------------------------------
-//#define ENABLE_SERIAL_DEBUG
+#define ENABLE_SERIAL_DEBUG
 //#define DEBUG_LOOP
 // --- Demo --------- -------------------------------
 #define PLAY_DEMO true
@@ -39,6 +39,8 @@
 #include <WiFiManager.h>	  //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
 #include <ESP8266mDNS.h>
 
+#include "WrapperUdpLed.h"
+
 // **************************************************
 // *** Blynk
 // **************************************************
@@ -55,6 +57,10 @@ char auth[] = "eb5f226404904fefb522f6c3b5f60fa2";
 const String wifiApName = "AmbiLightESP";
 const String wifiDnsName = "AmbiLightESP";
 const int ConfigureAPTimeout = 300;
+
+WrapperUdpLed udpLed;
+uint16_t udpLedPort = 19446;
+bool isUdpActive = false;
 
 volatile uint8_t globalBrightness = 128;
 
@@ -75,8 +81,9 @@ const uint8_t fxNrConfetti = 4;
 const uint8_t fxNrFade = 5;
 const uint8_t fxNrComet = 6;
 const uint8_t fxNrOrbit = 7;
-const uint8_t fxNrFill = 8;
-const int maxFxNr = 7;
+const uint8_t fxNrHyperion = 8;
+const uint8_t fxNrFill = 9;
+const int maxFxNr = 8;
 const int defaultFxNr = fxNrWave;
 std::vector<int> currFxNr;
 int maxColNr = 1;			// will be dynamically assigned once palettes are generated
@@ -91,6 +98,15 @@ uint8_t currentSat = 255;
 
 //std::vector<NeoGroup *> neoGroups;
 std::vector<NeoGroup> neoGroups;
+
+void udpUpdateLed(int id, byte r, byte g, byte b)
+{
+	if (isUdpActive)
+	{
+		NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
+		neoGroup->SetPixel(id, CRGB(r, g, b));
+	}
+}
 
 // **************************************************
 // *** Helper methods
@@ -166,7 +182,15 @@ bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 	{
 		DEBUG_PRINTLN("!!! WIFI NOT CONNECTED !!!");
 	}
+
 	delay(5000);
+
+	if (connected)
+	{
+		DEBUG_PRINTLN("UDP: initializing UDP listener.");
+		udpLed = WrapperUdpLed(PIXEL_COUNT, udpLedPort);
+		udpLed.onUpdateLed(udpUpdateLed);
+	}
 
 	return connected;
 }
@@ -416,6 +440,9 @@ void SetEffect(int grpNr, int fxNr,
 	wave fxWave = wave::LINEAR;
 	int fxSpeed = speed;
 
+	bool stopFxGroup = false;
+	bool stopFxHyperion = true;
+
 	NeoGroup *neoGroup = &(neoGroups.at(grpNr));
 	switch (fxNr)
 	{
@@ -472,6 +499,14 @@ void SetEffect(int grpNr, int fxNr,
 		fxMirror = mirror::MIRROR0;
 		// fxMirror = mirror::MIRROR1;
 		break;
+	case fxNrHyperion:
+		fxPatternName = "Hyperion";
+		stopFxGroup = true;
+		stopFxHyperion = false;
+		DEBUG_PRINTLN("Fx: starting UDP listener.");
+		udpLed.begin();
+		isUdpActive = true;
+		break;
 	case fxNrFill:
 		fxPatternName = "Fill";
 		fxPattern = pattern::FILL;
@@ -488,21 +523,38 @@ void SetEffect(int grpNr, int fxNr,
 		fxMirror = mirror::MIRROR0;
 		break;
 	}
-	if (targetFps > 0)
-		fxFps = targetFps;
-	DEBUG_PRINTLN("Fx: Changing effect to '" + String(fxPatternName) + "'.");
-	setGrpEffect(
-		grpNr,
-		fxPattern,
-		fxGlitter,
-		fxFps,
-		fxDirection,
-		fxMirror,
-		fxWave,
-		fxSpeed,
-		fxFpsFactor);
-	if (startFx)
-		startGroup(grpNr, onlyOnce);
+
+	DEBUG_PRINTLN("Fx: Setting pattern " + fxPatternName + " for group #" + String(grpNr) + ".");
+
+	if (stopFxHyperion && isUdpActive)
+	{
+		DEBUG_PRINTLN("Fx: stopping UDP listener.");
+		isUdpActive = false;
+		udpLed.stop();
+	}
+
+	if (stopFxGroup)
+	{
+		stopGroup(grpNr, true);
+	}
+	else
+	{
+		if (targetFps > 0)
+			fxFps = targetFps;
+		DEBUG_PRINTLN("Fx: Changing effect to '" + String(fxPatternName) + "'.");
+		setGrpEffect(
+			grpNr,
+			fxPattern,
+			fxGlitter,
+			fxFps,
+			fxDirection,
+			fxMirror,
+			fxWave,
+			fxSpeed,
+			fxFpsFactor);
+		if (startFx)
+			startGroup(grpNr, onlyOnce);
+	}
 	DEBUG_PRINTLN("SetEffect ---------------------------------------------------");
 }
 
@@ -718,6 +770,7 @@ void SendStatusToBlynkApp()
 	fxNames.add("Blenden");
 	fxNames.add("Komet");
 	fxNames.add("Orbit");
+	fxNames.add("AmbiLight");
 	Blynk.setProperty(V3, "labels", fxNames);
 
 	DEBUG_PRINTLN("Blynk: sending current values to app");
@@ -824,13 +877,24 @@ void loop()
 	}
 
 	bool ledsUpdated = false;
-	for (int grpNr = 0; grpNr < groupSizes.size(); grpNr++)
+	if (isUdpActive)
 	{
-		NeoGroup *neoGroup = &(neoGroups.at(grpNr));
-
-		if ((neoGroup->LedFirstNr + neoGroup->LedCount) <= PIXEL_COUNT)
+		ledsUpdated |= udpLed.handle();
+		if (ledsUpdated)
 		{
-			ledsUpdated |= neoGroup->Update();
+			DEBUG_PRINTLN("UDP: ambilight data received.");
+		}
+	}
+	else
+	{
+		for (int grpNr = 0; grpNr < groupSizes.size(); grpNr++)
+		{
+			NeoGroup *neoGroup = &(neoGroups.at(grpNr));
+
+			if ((neoGroup->LedFirstNr + neoGroup->LedCount) <= PIXEL_COUNT)
+			{
+				ledsUpdated |= neoGroup->Update();
+			}
 		}
 	}
 
