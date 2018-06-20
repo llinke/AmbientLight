@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include "SerialDebug.h"
 #include "FastLedInclude.h"
-//#include <ArduinoSTL.h>
+// #include <ArduinoSTL.h>
 #include <vector>
 #include <map>
 
 // #define DUMP_PALETTE
 
-//#define BOOST_COLORS
+// #define BOOST_COLORS
 #define BOOST_SAT_MIN 160
 #define BOOST_SAT_INCR 64
 #define BOOST_VAL_MIN 128
@@ -325,19 +325,19 @@ std::vector<CRGB> AnalogousPaletteFromHue(
 std::vector<CRGB> GeneratePaletteFromHue(
     String method, uint8_t hue, uint8_t sat)
 {
-    if (method == "Statisch")
+    if (method == "Farbe statisch")
         return {(CHSV(hue, sat, 255))};
-    if (method == "Analogous")
+    if (method == "Farbmix - Analog")
         return AnalogousPaletteFromHue(hue, sat);
-    if (method == "Analogous Complement")
+    if (method == "Farbmix Analog+Komplement")
         return AnalogousPaletteFromHue(hue, sat, true);
-    if (method == "Adjacent")
+    if (method == "Farbmix Angrenzend")
         return AdjacentPaletteFromHue(hue, sat);
-    if (method == "Adjacent Complement")
+    if (method == "Farbmix Angrenzend+Komplement")
         return AdjacentPaletteFromHue(hue, sat, true);
-    if (method == "Triad")
+    if (method == "Farbmix Triade")
         return TriadPaletteFromHue(hue, sat);
-    if (method == "Triad Complement")
+    if (method == "Farbmix Triade+Komplement")
         return TriadPaletteFromHue(hue, sat, true);
 
     return SimplePaletteFromColor(CHSV(hue, sat, 255), 1, 32);
@@ -413,13 +413,13 @@ void InitColorPalettes()
     // }
 
     // Placeholders for dynamic palettes from hue
-    AddColorPalette("Statisch", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255)*/, false);
-    AddColorPalette("Analogous", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255)*/, false);
-    AddColorPalette("Analogous Complement", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255, true)*/, false);
-    AddColorPalette("Adjacent", (std::vector<CRGB>)NULL /*AdjacentPaletteFromHue(hue, 255)*/, false);
-    AddColorPalette("Adjacent Complement", (std::vector<CRGB>)NULL /*AdjacentPaletteFromHue(hue, 255, true)*/, false);
-    AddColorPalette("Triad", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue, 255)*/, false);
-    AddColorPalette("Triad Complement", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue, 255, true)*/, false);
+    AddColorPalette("Farbe statisch", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255)*/, false);
+    AddColorPalette("Farbmix - Analog", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255)*/, false);
+    AddColorPalette("Farbmix Analog+Komplement", (std::vector<CRGB>)NULL /*AnalogousPaletteFromHue(hue, 255, true)*/, false);
+    AddColorPalette("Farbmix Angrenzend", (std::vector<CRGB>)NULL /*AdjacentPaletteFromHue(hue, 255)*/, false);
+    AddColorPalette("Farbmix Angrenzend+Komplement", (std::vector<CRGB>)NULL /*AdjacentPaletteFromHue(hue, 255, true)*/, false);
+    AddColorPalette("Farbmix Triade", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue, 255)*/, false);
+    AddColorPalette("Farbmix Triade+Komplement", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue, 255, true)*/, false);
 
     // World Cup 2018
     for (int teamNr = 0; teamNr < WorldCupTeamKeys.size(); teamNr++)

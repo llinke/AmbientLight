@@ -10,14 +10,18 @@
 // *** Compiler Flags
 // **************************************************
 // --- DEBUG ----------------------------------------
-//#define DEBUG_LOOP
+// #define DEBUG_LOOP
 // --- Demo --------- -------------------------------
 #define PLAY_DEMO true
 // --- FX/Colors ------------------------------------
-//#define ENABLE_RANDOM_COL
-//#define DO_NOT_START_FX_ON_INIT
+// #define ENABLE_RANDOM_COL
+// #define DO_NOT_START_FX_ON_INIT
+// --- WiFi ----------------------------------------
+// #define OFFLINE_MODE
 // --- BLYNK ----------------------------------------
+#ifndef OFFLINE_MODE
 #define USE_BLYNK
+#endif
 // #define KEEP_ONOFF_FLAGS
 // **************************************************
 
@@ -25,7 +29,7 @@
 // *** Includes
 // **************************************************
 #include "SerialDebug.h"
-//#include <ArduinoSTL.h>
+// #include <ArduinoSTL.h>
 #include <vector>
 #include <map>
 #include <string.h>
@@ -61,10 +65,14 @@ const int ConfigureAPTimeout = 300;
 
 WrapperUdpLed udpLed;
 uint16_t udpLedPort = 19446;
+#ifdef OFFLINE_MODE
+bool isAmbilightActive = false;
+#else
 #ifdef USE_BLYNK
 bool isAmbilightActive = false;
 #else
 bool isAmbilightActive = true;
+#endif
 #endif
 
 volatile uint8_t globalBrightness = 128;
@@ -260,7 +268,9 @@ int initStrip(bool doStart = false, bool playDemo = true)
 		FastLED.show();
 	}
 
+#ifndef OFFLINE_MODE
 	InitWifi(false); // do not use timeout, wait at WiFi config if not connected
+#endif
 
 	neoGroups.clear();
 	// DEBUG_PRINTLN("Adding special groups.");
@@ -469,7 +479,7 @@ void SetEffect(int grpNr, int fxNr,
 		fxPattern = pattern::CONFETTI;
 		fxGlitter = 0;
 		// fxFps /= 2; // half FPS looks better
-		// fxFpsFactor = 0.5; // half FPS looks better
+		fxFpsFactor = 0.5; // half FPS looks better
 		break;
 	case fxNrFade:
 		fxPatternName = "Fade";
@@ -503,9 +513,8 @@ void SetEffect(int grpNr, int fxNr,
 		fxWave = wave::EASEINOUT;
 		// fxFps *= 1.5; // faster FPS looks better
 		fxFpsFactor = 1.5; // faster FPS looks better
-		fxFpsFactor = 0.5; // half FPS looks better
 		// fxMirror = mirror::MIRROR0;
-		fxMirror = mirror::MIRROR2;
+		fxMirror = mirror::MIRROR1;
 		break;
 	default:
 		fxPatternName = "Static";
@@ -778,7 +787,6 @@ void SendStatusToBlynkApp()
 	fxNames.add("Blenden");
 	fxNames.add("Komet");
 	fxNames.add("Orbit");
-	fxNames.add("AmbiLight");
 	Blynk.setProperty(V3, "labels", fxNames);
 
 	DEBUG_PRINTLN("Blynk: sending current values to app");
@@ -845,7 +853,7 @@ void setup()
 	}
 	//activeGrpNr = 0;
 
-	DEBUG_PRINT("FastLED: Active group #" + String(activeGrpNr));
+	DEBUG_PRINTLN("FastLED: Active group #" + String(activeGrpNr));
 
 	BlynkSetup();
 }
