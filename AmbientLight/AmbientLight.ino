@@ -10,14 +10,15 @@
 // *** Compiler Flags
 // **************************************************
 // --- DEBUG ----------------------------------------
-#define ENABLE_SERIAL_DEBUG
 //#define DEBUG_LOOP
 // --- Demo --------- -------------------------------
 #define PLAY_DEMO true
 // --- FX/Colors ------------------------------------
 //#define ENABLE_RANDOM_COL
 //#define DO_NOT_START_FX_ON_INIT
-
+// --- BLYNK ----------------------------------------
+#define USE_BLYNK
+// #define KEEP_ONOFF_FLAGS
 // **************************************************
 
 // **************************************************
@@ -58,11 +59,13 @@ const String wifiApName = "Ambilight_AP";
 const String wifiDnsName = "AmbilightESP";
 const int ConfigureAPTimeout = 300;
 
-bool isInitializing = true;
-
 WrapperUdpLed udpLed;
 uint16_t udpLedPort = 19446;
+#ifdef USE_BLYNK
 bool isAmbilightActive = false;
+#else
+bool isAmbilightActive = true;
+#endif
 
 volatile uint8_t globalBrightness = 128;
 
@@ -178,7 +181,7 @@ bool InitWifi(bool useWifiCfgTimeout = true, bool forceReconnect = false)
 		FastLED.show();
 	}
 
-	delay(5000);
+	delay(2500);
 
 	if (connected)
 	{
@@ -274,8 +277,6 @@ int initStrip(bool doStart = false, bool playDemo = true)
 		nextGroupStart += groupSizes[i];
 	}
 	activeGrpNr = 0;
-
-	isInitializing = false;
 
 	return doStart ? startStrip() : PIXEL_COUNT;
 }
@@ -616,12 +617,6 @@ void NextColor(int nextCol = -1)
 // V0 In/Off
 BLYNK_WRITE(V0)
 {
-	if (isInitializing)
-	{
-		DEBUG_PRINTLN("BLYNK V0: grp#" + String(activeGrpNr) + ", on/off => ignored during init phase.");
-		return;
-	}
-
 	int pinValue = param.asInt();
 	DEBUG_PRINTLN("BLYNK V0: grp#" + String(activeGrpNr) + ", on/off => " + String(pinValue));
 	if (pinValue == 0)
@@ -671,20 +666,16 @@ BLYNK_WRITE(V3)
 // V4 Ambilight On/Off
 BLYNK_WRITE(V4)
 {
-	if (isInitializing)
-	{
-		DEBUG_PRINTLN("BLYNK V4: Ambilight => ignored during init phase.");
-		return;
-	}
-
 	int pinValue = param.asInt();
 	pinValue = constrain(pinValue, 0, 1);
 	DEBUG_PRINTLN("BLYNK V4: Ambilight => " + String(pinValue));
 
 	isAmbilightActive = (pinValue == 1);
+	DEBUG_PRINTLN("BLYNK V4: isAmbilightActive => " + String(isAmbilightActive));
 	if (isAmbilightActive)
 	{
 		stopGroup(activeGrpNr, false); // no immediate stop, fade out
+		DEBUG_PRINTLN("BLYNK V4: isGroupFadingOut => " + String(isGroupFadingOut(activeGrpNr)));
 	}
 	else
 	{
@@ -740,8 +731,18 @@ BLYNK_WRITE(V13)
 
 BLYNK_CONNECTED()
 {
+#ifndef KEEP_ONOFF_FLAGS
+	DEBUG_PRINTLN("Blynk connected: resetting on/off flags to defaults");
+	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
+	Blynk.virtualWrite(V0, neoGroup->Active);  // FX on/off
+	Blynk.virtualWrite(V4, isAmbilightActive); // Ambilight on/off
+#endif
+
 	DEBUG_PRINTLN("Blynk connected: synchonizing values from cloud");
 	Blynk.syncAll();
+	DEBUG_PRINTLN("Blynk connected: values synchronized from cloud");
+
+	SendStatusToBlynkApp();
 }
 
 BLYNK_APP_CONNECTED()
@@ -757,6 +758,7 @@ BLYNK_APP_DISCONNECTED()
 
 void SendStatusToBlynkApp()
 {
+#ifdef USE_BLYNK
 	if (WiFi.status() != WL_CONNECTED)
 		return;
 
@@ -789,14 +791,17 @@ void SendStatusToBlynkApp()
 	Blynk.virtualWrite(V10, currColNr.at(activeGrpNr));				// Color Palette
 	Blynk.virtualWrite(V12, (uint8_t)currentHue);					// Custom Color Hue
 	Blynk.virtualWrite(V13, (uint8_t)((currentSat + 1) / 16));		// Custom Color Sat
+#endif
 }
 
 void BlynkSetup()
 {
+#ifdef USE_BLYNK
 	Blynk.config(auth);
 	Blynk.connect();
 
 	// SendStatusToBlynkApp();
+#endif
 }
 #pragma endregion
 
@@ -853,8 +858,9 @@ void setup()
 // Main loop
 void loop()
 {
+#ifdef USE_BLYNK
 	Blynk.run();
-
+#endif
 	// Evaluate expander pins and execute attached callbacks
 	//DEBUG_PRINTLN("LOOP ------------------------------------------------------");
 
@@ -865,19 +871,19 @@ void loop()
 	}
 
 	bool ledsUpdated = false;
-	if (isAmbilightActive)
+	if (isAmbilightActive &&
+		!isGroupFadingOut(activeGrpNr))
 	{
-		if (!isGroupFadingOut(activeGrpNr)) // Do not handle while FX is fading out
+		ledsUpdated |= udpLed.handle(true);
+		if (ledsUpdated)
 		{
-			ledsUpdated |= udpLed.handle();
-			if (ledsUpdated)
-			{
-				DEBUG_PRINTLN("UDP: ambilight data received.");
-			}
+			DEBUG_PRINTLN("UDP: ambilight data received.");
 		}
 	}
 	else
 	{
+		udpLed.handle(false); // handle, but don't do anything with data
+
 		for (int grpNr = 0; grpNr < groupSizes.size(); grpNr++)
 		{
 			NeoGroup *neoGroup = &(neoGroups.at(grpNr));

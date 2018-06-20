@@ -1,6 +1,8 @@
 #ifndef SerialDebug_h
 #define SerialDebug_h
 
+// #define ENABLE_SERIAL_DEBUG
+
 // **************************************************
 // *** Serial Debugging
 // **************************************************

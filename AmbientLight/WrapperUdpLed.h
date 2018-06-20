@@ -9,14 +9,17 @@ class WrapperUdpLed
 {
   public:
     WrapperUdpLed(){};
-    WrapperUdpLed(uint16_t ledCount, uint16_t udpPort);
+    WrapperUdpLed(
+        uint16_t ledCount, uint16_t udpPort);
 
     void begin(void);
     void stop(void);
-    bool handle(void);
+    bool handle(bool);
 
-    void onUpdateLed(void (*function)(int, byte, byte, byte));
-    void onRefreshLeds(void (*function)(void));
+    void onUpdateLed(
+        void (*function)(int, byte, byte, byte));
+    void onRefreshLeds(
+        void (*function)(void));
 
   private:
     WiFiUDP _udp;
@@ -26,13 +29,9 @@ class WrapperUdpLed
     uint16_t _bufferSize;
     boolean _opened;
 
-    void
-    updateLed(int id, byte r, byte g, byte b),
+    void updateLed(
+        int id, byte r, byte g, byte b),
         (*updateLedPointer)(int, byte, byte, byte);
-
-    // void
-    // refreshLeds(void),
-    //     (*refreshLedsPointer)(void);
 };
 
 #endif

@@ -7,10 +7,10 @@
 	// DEVICE CONFIGURATION 
 	"device" :
 	{
-		"name"       : "MyHyperionConfig",
+		"name"       : "AmbiLightESPConfig",
 		"type"       : "udp",
-		"output"     : "192.168.43.171:19446",
-		"rate"     : 500000,
+		"output"     : "AmbiLightESP:19446",
+		"rate"     : 1000000,
 		"maxpacket"     : 1450,
 		"protocol"     : 0,
 		"colorOrder" : "rgb"
@@ -64,8 +64,8 @@
 				"leds" : "*",
 				"hsl" :
 				{
-					"saturationGain"	: 1.0000,
-					"luminanceGain"		: 1.0000,
+					"saturationGain"	: 1.1250,
+					"luminanceGain"		: 1.1250,
 					"luminanceMinimum"		: 0.0000
 				},
 				"red" :
@@ -89,7 +89,7 @@
 		"smoothing" :
 		{
 			"type"            : "linear",
-			"time_ms"         : 200,
+			"time_ms"         : 100,
 			"updateFrequency" : 20.0000,
 			"updateDelay"     : 0
 		}
@@ -107,10 +107,10 @@
 		"sizeDecimation" : 8,
 		"priority" : 900,
 		"mode" : "2D",
-		"cropLeft" : 0,
-		"cropRight" : 0,
-		"cropTop" : 0,
-		"cropBottom" : 0,
+		"cropLeft" : 8,
+		"cropRight" : 8,
+		"cropTop" : 8,
+		"cropBottom" : 8,
 		"redSignalThreshold" : 0.0,
 		"greenSignalThreshold" : 0.0,
 		"blueSignalThreshold" : 0.0
@@ -120,7 +120,7 @@
 	"blackborderdetector" : 
 	{
 		"enable" : true,
-		"threshold" : 0.0,
+		"threshold" : 0.05,
 		"unknownFrameCnt" : 600,
 		"borderFrameCnt" : 50,
 		"maxInconsistentCnt" : 10,
@@ -169,963 +169,963 @@
 	[
 		{
 			"index" : 0,
-			"hscan" : { "minimum" : 0.2900, "maximum" : 0.3040 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.2857, "maximum" : 0.3000 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 1,
-			"hscan" : { "minimum" : 0.2760, "maximum" : 0.2900 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.2714, "maximum" : 0.2857 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 2,
-			"hscan" : { "minimum" : 0.2620, "maximum" : 0.2760 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.2571, "maximum" : 0.2714 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 3,
-			"hscan" : { "minimum" : 0.2480, "maximum" : 0.2620 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.2429, "maximum" : 0.2571 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 4,
-			"hscan" : { "minimum" : 0.2340, "maximum" : 0.2480 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.2286, "maximum" : 0.2429 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 5,
-			"hscan" : { "minimum" : 0.2200, "maximum" : 0.2340 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.2143, "maximum" : 0.2286 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 6,
-			"hscan" : { "minimum" : 0.2060, "maximum" : 0.2200 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.2000, "maximum" : 0.2143 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 7,
-			"hscan" : { "minimum" : 0.1920, "maximum" : 0.2060 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.1857, "maximum" : 0.2000 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 8,
-			"hscan" : { "minimum" : 0.1780, "maximum" : 0.1920 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.1714, "maximum" : 0.1857 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 9,
-			"hscan" : { "minimum" : 0.1640, "maximum" : 0.1780 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.1571, "maximum" : 0.1714 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 10,
-			"hscan" : { "minimum" : 0.1500, "maximum" : 0.1640 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.1429, "maximum" : 0.1571 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 11,
-			"hscan" : { "minimum" : 0.1360, "maximum" : 0.1500 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.1286, "maximum" : 0.1429 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 12,
-			"hscan" : { "minimum" : 0.1220, "maximum" : 0.1360 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.1143, "maximum" : 0.1286 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 13,
-			"hscan" : { "minimum" : 0.1080, "maximum" : 0.1220 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.1000, "maximum" : 0.1143 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 14,
-			"hscan" : { "minimum" : 0.0940, "maximum" : 0.1080 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.0857, "maximum" : 0.1000 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 15,
-			"hscan" : { "minimum" : 0.0800, "maximum" : 0.0940 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.0714, "maximum" : 0.0857 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 16,
-			"hscan" : { "minimum" : 0.0660, "maximum" : 0.0800 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.0571, "maximum" : 0.0714 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 17,
-			"hscan" : { "minimum" : 0.0520, "maximum" : 0.0660 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.0429, "maximum" : 0.0571 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 18,
-			"hscan" : { "minimum" : 0.0380, "maximum" : 0.0520 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.0286, "maximum" : 0.0429 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 19,
-			"hscan" : { "minimum" : 0.0240, "maximum" : 0.0380 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.0143, "maximum" : 0.0286 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 20,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0240 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0143 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 21,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.9655, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.9750, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 22,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.9410, "maximum" : 0.9655 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.9500, "maximum" : 0.9750 }
 		},
 		{
 			"index" : 23,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.9165, "maximum" : 0.9410 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.9250, "maximum" : 0.9500 }
 		},
 		{
 			"index" : 24,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.8920, "maximum" : 0.9165 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.9000, "maximum" : 0.9250 }
 		},
 		{
 			"index" : 25,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.8675, "maximum" : 0.8920 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.8750, "maximum" : 0.9000 }
 		},
 		{
 			"index" : 26,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.8430, "maximum" : 0.8675 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.8500, "maximum" : 0.8750 }
 		},
 		{
 			"index" : 27,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.8185, "maximum" : 0.8430 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.8250, "maximum" : 0.8500 }
 		},
 		{
 			"index" : 28,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.7940, "maximum" : 0.8185 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.8000, "maximum" : 0.8250 }
 		},
 		{
 			"index" : 29,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.7695, "maximum" : 0.7940 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.7750, "maximum" : 0.8000 }
 		},
 		{
 			"index" : 30,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.7450, "maximum" : 0.7695 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.7500, "maximum" : 0.7750 }
 		},
 		{
 			"index" : 31,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.7205, "maximum" : 0.7450 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.7250, "maximum" : 0.7500 }
 		},
 		{
 			"index" : 32,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.6960, "maximum" : 0.7205 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.7000, "maximum" : 0.7250 }
 		},
 		{
 			"index" : 33,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.6715, "maximum" : 0.6960 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.6750, "maximum" : 0.7000 }
 		},
 		{
 			"index" : 34,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.6470, "maximum" : 0.6715 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.6500, "maximum" : 0.6750 }
 		},
 		{
 			"index" : 35,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.6225, "maximum" : 0.6470 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.6250, "maximum" : 0.6500 }
 		},
 		{
 			"index" : 36,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.5980, "maximum" : 0.6225 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.6000, "maximum" : 0.6250 }
 		},
 		{
 			"index" : 37,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.5735, "maximum" : 0.5980 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.5750, "maximum" : 0.6000 }
 		},
 		{
 			"index" : 38,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.5490, "maximum" : 0.5735 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.5500, "maximum" : 0.5750 }
 		},
 		{
 			"index" : 39,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.5245, "maximum" : 0.5490 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.5250, "maximum" : 0.5500 }
 		},
 		{
 			"index" : 40,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.5000, "maximum" : 0.5245 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.5000, "maximum" : 0.5250 }
 		},
 		{
 			"index" : 41,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.4755, "maximum" : 0.5000 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.4750, "maximum" : 0.5000 }
 		},
 		{
 			"index" : 42,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.4510, "maximum" : 0.4755 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.4500, "maximum" : 0.4750 }
 		},
 		{
 			"index" : 43,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.4265, "maximum" : 0.4510 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.4250, "maximum" : 0.4500 }
 		},
 		{
 			"index" : 44,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.4020, "maximum" : 0.4265 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.4000, "maximum" : 0.4250 }
 		},
 		{
 			"index" : 45,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.3775, "maximum" : 0.4020 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.3750, "maximum" : 0.4000 }
 		},
 		{
 			"index" : 46,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.3530, "maximum" : 0.3775 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.3500, "maximum" : 0.3750 }
 		},
 		{
 			"index" : 47,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.3285, "maximum" : 0.3530 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.3250, "maximum" : 0.3500 }
 		},
 		{
 			"index" : 48,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.3040, "maximum" : 0.3285 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.3000, "maximum" : 0.3250 }
 		},
 		{
 			"index" : 49,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.2795, "maximum" : 0.3040 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.2750, "maximum" : 0.3000 }
 		},
 		{
 			"index" : 50,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.2550, "maximum" : 0.2795 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.2500, "maximum" : 0.2750 }
 		},
 		{
 			"index" : 51,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.2305, "maximum" : 0.2550 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.2250, "maximum" : 0.2500 }
 		},
 		{
 			"index" : 52,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.2060, "maximum" : 0.2305 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.2000, "maximum" : 0.2250 }
 		},
 		{
 			"index" : 53,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.1815, "maximum" : 0.2060 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.1750, "maximum" : 0.2000 }
 		},
 		{
 			"index" : 54,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.1570, "maximum" : 0.1815 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.1500, "maximum" : 0.1750 }
 		},
 		{
 			"index" : 55,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.1325, "maximum" : 0.1570 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.1250, "maximum" : 0.1500 }
 		},
 		{
 			"index" : 56,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.1080, "maximum" : 0.1325 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.1000, "maximum" : 0.1250 }
 		},
 		{
 			"index" : 57,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.0835, "maximum" : 0.1080 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.0750, "maximum" : 0.1000 }
 		},
 		{
 			"index" : 58,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.0590, "maximum" : 0.0835 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.0500, "maximum" : 0.0750 }
 		},
 		{
 			"index" : 59,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.0345, "maximum" : 0.0590 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.0250, "maximum" : 0.0500 }
 		},
 		{
 			"index" : 60,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0600 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0345 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0500 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0250 }
 		},
 		{
 			"index" : 61,
-			"hscan" : { "minimum" : 0.0100, "maximum" : 0.0240 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.0000, "maximum" : 0.0143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 62,
-			"hscan" : { "minimum" : 0.0240, "maximum" : 0.0380 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.0143, "maximum" : 0.0286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 63,
-			"hscan" : { "minimum" : 0.0380, "maximum" : 0.0520 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.0286, "maximum" : 0.0429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 64,
-			"hscan" : { "minimum" : 0.0520, "maximum" : 0.0660 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.0429, "maximum" : 0.0571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 65,
-			"hscan" : { "minimum" : 0.0660, "maximum" : 0.0800 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.0571, "maximum" : 0.0714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 66,
-			"hscan" : { "minimum" : 0.0800, "maximum" : 0.0940 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.0714, "maximum" : 0.0857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 67,
-			"hscan" : { "minimum" : 0.0940, "maximum" : 0.1080 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.0857, "maximum" : 0.1000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 68,
-			"hscan" : { "minimum" : 0.1080, "maximum" : 0.1220 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.1000, "maximum" : 0.1143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 69,
-			"hscan" : { "minimum" : 0.1220, "maximum" : 0.1360 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.1143, "maximum" : 0.1286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 70,
-			"hscan" : { "minimum" : 0.1360, "maximum" : 0.1500 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.1286, "maximum" : 0.1429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 71,
-			"hscan" : { "minimum" : 0.1500, "maximum" : 0.1640 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.1429, "maximum" : 0.1571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 72,
-			"hscan" : { "minimum" : 0.1640, "maximum" : 0.1780 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.1571, "maximum" : 0.1714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 73,
-			"hscan" : { "minimum" : 0.1780, "maximum" : 0.1920 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.1714, "maximum" : 0.1857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 74,
-			"hscan" : { "minimum" : 0.1920, "maximum" : 0.2060 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.1857, "maximum" : 0.2000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 75,
-			"hscan" : { "minimum" : 0.2060, "maximum" : 0.2200 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.2000, "maximum" : 0.2143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 76,
-			"hscan" : { "minimum" : 0.2200, "maximum" : 0.2340 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.2143, "maximum" : 0.2286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 77,
-			"hscan" : { "minimum" : 0.2340, "maximum" : 0.2480 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.2286, "maximum" : 0.2429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 78,
-			"hscan" : { "minimum" : 0.2480, "maximum" : 0.2620 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.2429, "maximum" : 0.2571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 79,
-			"hscan" : { "minimum" : 0.2620, "maximum" : 0.2760 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.2571, "maximum" : 0.2714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 80,
-			"hscan" : { "minimum" : 0.2760, "maximum" : 0.2900 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.2714, "maximum" : 0.2857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 81,
-			"hscan" : { "minimum" : 0.2900, "maximum" : 0.3040 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.2857, "maximum" : 0.3000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 82,
-			"hscan" : { "minimum" : 0.3040, "maximum" : 0.3180 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.3000, "maximum" : 0.3143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 83,
-			"hscan" : { "minimum" : 0.3180, "maximum" : 0.3320 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.3143, "maximum" : 0.3286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 84,
-			"hscan" : { "minimum" : 0.3320, "maximum" : 0.3460 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.3286, "maximum" : 0.3429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 85,
-			"hscan" : { "minimum" : 0.3460, "maximum" : 0.3600 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.3429, "maximum" : 0.3571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 86,
-			"hscan" : { "minimum" : 0.3600, "maximum" : 0.3740 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.3571, "maximum" : 0.3714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 87,
-			"hscan" : { "minimum" : 0.3740, "maximum" : 0.3880 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.3714, "maximum" : 0.3857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 88,
-			"hscan" : { "minimum" : 0.3880, "maximum" : 0.4020 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.3857, "maximum" : 0.4000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 89,
-			"hscan" : { "minimum" : 0.4020, "maximum" : 0.4160 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.4000, "maximum" : 0.4143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 90,
-			"hscan" : { "minimum" : 0.4160, "maximum" : 0.4300 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.4143, "maximum" : 0.4286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 91,
-			"hscan" : { "minimum" : 0.4300, "maximum" : 0.4440 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.4286, "maximum" : 0.4429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 92,
-			"hscan" : { "minimum" : 0.4440, "maximum" : 0.4580 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.4429, "maximum" : 0.4571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 93,
-			"hscan" : { "minimum" : 0.4580, "maximum" : 0.4720 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.4571, "maximum" : 0.4714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 94,
-			"hscan" : { "minimum" : 0.4720, "maximum" : 0.4860 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.4714, "maximum" : 0.4857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 95,
-			"hscan" : { "minimum" : 0.4860, "maximum" : 0.5000 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.4857, "maximum" : 0.5000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 96,
-			"hscan" : { "minimum" : 0.5000, "maximum" : 0.5140 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.5000, "maximum" : 0.5143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 97,
-			"hscan" : { "minimum" : 0.5140, "maximum" : 0.5280 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.5143, "maximum" : 0.5286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 98,
-			"hscan" : { "minimum" : 0.5280, "maximum" : 0.5420 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.5286, "maximum" : 0.5429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 99,
-			"hscan" : { "minimum" : 0.5420, "maximum" : 0.5560 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.5429, "maximum" : 0.5571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 100,
-			"hscan" : { "minimum" : 0.5560, "maximum" : 0.5700 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.5571, "maximum" : 0.5714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 101,
-			"hscan" : { "minimum" : 0.5700, "maximum" : 0.5840 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.5714, "maximum" : 0.5857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 102,
-			"hscan" : { "minimum" : 0.5840, "maximum" : 0.5980 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.5857, "maximum" : 0.6000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 103,
-			"hscan" : { "minimum" : 0.5980, "maximum" : 0.6120 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.6000, "maximum" : 0.6143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 104,
-			"hscan" : { "minimum" : 0.6120, "maximum" : 0.6260 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.6143, "maximum" : 0.6286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 105,
-			"hscan" : { "minimum" : 0.6260, "maximum" : 0.6400 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.6286, "maximum" : 0.6429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 106,
-			"hscan" : { "minimum" : 0.6400, "maximum" : 0.6540 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.6429, "maximum" : 0.6571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 107,
-			"hscan" : { "minimum" : 0.6540, "maximum" : 0.6680 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.6571, "maximum" : 0.6714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 108,
-			"hscan" : { "minimum" : 0.6680, "maximum" : 0.6820 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.6714, "maximum" : 0.6857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 109,
-			"hscan" : { "minimum" : 0.6820, "maximum" : 0.6960 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.6857, "maximum" : 0.7000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 110,
-			"hscan" : { "minimum" : 0.6960, "maximum" : 0.7100 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.7000, "maximum" : 0.7143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 111,
-			"hscan" : { "minimum" : 0.7100, "maximum" : 0.7240 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.7143, "maximum" : 0.7286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 112,
-			"hscan" : { "minimum" : 0.7240, "maximum" : 0.7380 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.7286, "maximum" : 0.7429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 113,
-			"hscan" : { "minimum" : 0.7380, "maximum" : 0.7520 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.7429, "maximum" : 0.7571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 114,
-			"hscan" : { "minimum" : 0.7520, "maximum" : 0.7660 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.7571, "maximum" : 0.7714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 115,
-			"hscan" : { "minimum" : 0.7660, "maximum" : 0.7800 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.7714, "maximum" : 0.7857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 116,
-			"hscan" : { "minimum" : 0.7800, "maximum" : 0.7940 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.7857, "maximum" : 0.8000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 117,
-			"hscan" : { "minimum" : 0.7940, "maximum" : 0.8080 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.8000, "maximum" : 0.8143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 118,
-			"hscan" : { "minimum" : 0.8080, "maximum" : 0.8220 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.8143, "maximum" : 0.8286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 119,
-			"hscan" : { "minimum" : 0.8220, "maximum" : 0.8360 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.8286, "maximum" : 0.8429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 120,
-			"hscan" : { "minimum" : 0.8360, "maximum" : 0.8500 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.8429, "maximum" : 0.8571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 121,
-			"hscan" : { "minimum" : 0.8500, "maximum" : 0.8640 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.8571, "maximum" : 0.8714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 122,
-			"hscan" : { "minimum" : 0.8640, "maximum" : 0.8780 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.8714, "maximum" : 0.8857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 123,
-			"hscan" : { "minimum" : 0.8780, "maximum" : 0.8920 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.8857, "maximum" : 0.9000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 124,
-			"hscan" : { "minimum" : 0.8920, "maximum" : 0.9060 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.9000, "maximum" : 0.9143 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 125,
-			"hscan" : { "minimum" : 0.9060, "maximum" : 0.9200 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.9143, "maximum" : 0.9286 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 126,
-			"hscan" : { "minimum" : 0.9200, "maximum" : 0.9340 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.9286, "maximum" : 0.9429 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 127,
-			"hscan" : { "minimum" : 0.9340, "maximum" : 0.9480 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.9429, "maximum" : 0.9571 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 128,
-			"hscan" : { "minimum" : 0.9480, "maximum" : 0.9620 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.9571, "maximum" : 0.9714 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 129,
-			"hscan" : { "minimum" : 0.9620, "maximum" : 0.9760 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.9714, "maximum" : 0.9857 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 130,
-			"hscan" : { "minimum" : 0.9760, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0900 }
+			"hscan" : { "minimum" : 0.9857, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0800 }
 		},
 		{
 			"index" : 131,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.0100, "maximum" : 0.0345 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.0000, "maximum" : 0.0250 }
 		},
 		{
 			"index" : 132,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.0345, "maximum" : 0.0590 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.0250, "maximum" : 0.0500 }
 		},
 		{
 			"index" : 133,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.0590, "maximum" : 0.0835 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.0500, "maximum" : 0.0750 }
 		},
 		{
 			"index" : 134,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.0835, "maximum" : 0.1080 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.0750, "maximum" : 0.1000 }
 		},
 		{
 			"index" : 135,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.1080, "maximum" : 0.1325 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.1000, "maximum" : 0.1250 }
 		},
 		{
 			"index" : 136,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.1325, "maximum" : 0.1570 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.1250, "maximum" : 0.1500 }
 		},
 		{
 			"index" : 137,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.1570, "maximum" : 0.1815 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.1500, "maximum" : 0.1750 }
 		},
 		{
 			"index" : 138,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.1815, "maximum" : 0.2060 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.1750, "maximum" : 0.2000 }
 		},
 		{
 			"index" : 139,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.2060, "maximum" : 0.2305 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.2000, "maximum" : 0.2250 }
 		},
 		{
 			"index" : 140,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.2305, "maximum" : 0.2550 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.2250, "maximum" : 0.2500 }
 		},
 		{
 			"index" : 141,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.2550, "maximum" : 0.2795 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.2500, "maximum" : 0.2750 }
 		},
 		{
 			"index" : 142,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.2795, "maximum" : 0.3040 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.2750, "maximum" : 0.3000 }
 		},
 		{
 			"index" : 143,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.3040, "maximum" : 0.3285 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.3000, "maximum" : 0.3250 }
 		},
 		{
 			"index" : 144,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.3285, "maximum" : 0.3530 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.3250, "maximum" : 0.3500 }
 		},
 		{
 			"index" : 145,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.3530, "maximum" : 0.3775 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.3500, "maximum" : 0.3750 }
 		},
 		{
 			"index" : 146,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.3775, "maximum" : 0.4020 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.3750, "maximum" : 0.4000 }
 		},
 		{
 			"index" : 147,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.4020, "maximum" : 0.4265 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.4000, "maximum" : 0.4250 }
 		},
 		{
 			"index" : 148,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.4265, "maximum" : 0.4510 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.4250, "maximum" : 0.4500 }
 		},
 		{
 			"index" : 149,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.4510, "maximum" : 0.4755 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.4500, "maximum" : 0.4750 }
 		},
 		{
 			"index" : 150,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.4755, "maximum" : 0.5000 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.4750, "maximum" : 0.5000 }
 		},
 		{
 			"index" : 151,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.5000, "maximum" : 0.5245 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.5000, "maximum" : 0.5250 }
 		},
 		{
 			"index" : 152,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.5245, "maximum" : 0.5490 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.5250, "maximum" : 0.5500 }
 		},
 		{
 			"index" : 153,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.5490, "maximum" : 0.5735 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.5500, "maximum" : 0.5750 }
 		},
 		{
 			"index" : 154,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.5735, "maximum" : 0.5980 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.5750, "maximum" : 0.6000 }
 		},
 		{
 			"index" : 155,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.5980, "maximum" : 0.6225 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.6000, "maximum" : 0.6250 }
 		},
 		{
 			"index" : 156,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.6225, "maximum" : 0.6470 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.6250, "maximum" : 0.6500 }
 		},
 		{
 			"index" : 157,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.6470, "maximum" : 0.6715 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.6500, "maximum" : 0.6750 }
 		},
 		{
 			"index" : 158,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.6715, "maximum" : 0.6960 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.6750, "maximum" : 0.7000 }
 		},
 		{
 			"index" : 159,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.6960, "maximum" : 0.7205 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.7000, "maximum" : 0.7250 }
 		},
 		{
 			"index" : 160,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.7205, "maximum" : 0.7450 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.7250, "maximum" : 0.7500 }
 		},
 		{
 			"index" : 161,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.7450, "maximum" : 0.7695 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.7500, "maximum" : 0.7750 }
 		},
 		{
 			"index" : 162,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.7695, "maximum" : 0.7940 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.7750, "maximum" : 0.8000 }
 		},
 		{
 			"index" : 163,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.7940, "maximum" : 0.8185 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.8000, "maximum" : 0.8250 }
 		},
 		{
 			"index" : 164,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.8185, "maximum" : 0.8430 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.8250, "maximum" : 0.8500 }
 		},
 		{
 			"index" : 165,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.8430, "maximum" : 0.8675 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.8500, "maximum" : 0.8750 }
 		},
 		{
 			"index" : 166,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.8675, "maximum" : 0.8920 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.8750, "maximum" : 0.9000 }
 		},
 		{
 			"index" : 167,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.8920, "maximum" : 0.9165 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.9000, "maximum" : 0.9250 }
 		},
 		{
 			"index" : 168,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.9165, "maximum" : 0.9410 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.9250, "maximum" : 0.9500 }
 		},
 		{
 			"index" : 169,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.9410, "maximum" : 0.9655 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.9500, "maximum" : 0.9750 }
 		},
 		{
 			"index" : 170,
-			"hscan" : { "minimum" : 0.9400, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.9655, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.9500, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.9750, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 171,
-			"hscan" : { "minimum" : 0.9760, "maximum" : 0.9900 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.9857, "maximum" : 1.0000 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 172,
-			"hscan" : { "minimum" : 0.9620, "maximum" : 0.9760 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.9714, "maximum" : 0.9857 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 173,
-			"hscan" : { "minimum" : 0.9480, "maximum" : 0.9620 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.9571, "maximum" : 0.9714 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 174,
-			"hscan" : { "minimum" : 0.9340, "maximum" : 0.9480 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.9429, "maximum" : 0.9571 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 175,
-			"hscan" : { "minimum" : 0.9200, "maximum" : 0.9340 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.9286, "maximum" : 0.9429 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 176,
-			"hscan" : { "minimum" : 0.9060, "maximum" : 0.9200 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.9143, "maximum" : 0.9286 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 177,
-			"hscan" : { "minimum" : 0.8920, "maximum" : 0.9060 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.9000, "maximum" : 0.9143 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 178,
-			"hscan" : { "minimum" : 0.8780, "maximum" : 0.8920 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.8857, "maximum" : 0.9000 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 179,
-			"hscan" : { "minimum" : 0.8640, "maximum" : 0.8780 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.8714, "maximum" : 0.8857 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 180,
-			"hscan" : { "minimum" : 0.8500, "maximum" : 0.8640 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.8571, "maximum" : 0.8714 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 181,
-			"hscan" : { "minimum" : 0.8360, "maximum" : 0.8500 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.8429, "maximum" : 0.8571 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 182,
-			"hscan" : { "minimum" : 0.8220, "maximum" : 0.8360 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.8286, "maximum" : 0.8429 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 183,
-			"hscan" : { "minimum" : 0.8080, "maximum" : 0.8220 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.8143, "maximum" : 0.8286 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 184,
-			"hscan" : { "minimum" : 0.7940, "maximum" : 0.8080 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.8000, "maximum" : 0.8143 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 185,
-			"hscan" : { "minimum" : 0.7800, "maximum" : 0.7940 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.7857, "maximum" : 0.8000 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 186,
-			"hscan" : { "minimum" : 0.7660, "maximum" : 0.7800 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.7714, "maximum" : 0.7857 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 187,
-			"hscan" : { "minimum" : 0.7520, "maximum" : 0.7660 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.7571, "maximum" : 0.7714 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 188,
-			"hscan" : { "minimum" : 0.7380, "maximum" : 0.7520 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.7429, "maximum" : 0.7571 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 189,
-			"hscan" : { "minimum" : 0.7240, "maximum" : 0.7380 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.7286, "maximum" : 0.7429 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 190,
-			"hscan" : { "minimum" : 0.7100, "maximum" : 0.7240 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.7143, "maximum" : 0.7286 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		},
 		{
 			"index" : 191,
-			"hscan" : { "minimum" : 0.6960, "maximum" : 0.7100 },
-			"vscan" : { "minimum" : 0.9100, "maximum" : 0.9900 }
+			"hscan" : { "minimum" : 0.7000, "maximum" : 0.7143 },
+			"vscan" : { "minimum" : 0.9200, "maximum" : 1.0000 }
 		}
 	],
 
