@@ -45,6 +45,9 @@
 #include <ESP8266mDNS.h>
 
 #include "WrapperUdpLed.h"
+#include <Thread.h>
+#include <ThreadController.h>
+#include "EnhancedThread.h"
 
 // **************************************************
 // *** Blynk
@@ -63,22 +66,18 @@ const String wifiApName = "Ambilight_AP";
 const String wifiDnsName = "AmbilightESP";
 const int ConfigureAPTimeout = 300;
 
+#define AMBILIGHT_AUTO_TIMEOUT 5000
 WrapperUdpLed udpLed;
 uint16_t udpLedPort = 19446;
-#ifdef OFFLINE_MODE
+bool isAmbilightAutoModeActive = true;
 bool isAmbilightActive = false;
-#else
-#ifdef USE_BLYNK
-bool isAmbilightActive = false;
-#else
-bool isAmbilightActive = true;
-#endif
-#endif
-
-volatile uint8_t globalBrightness = 128;
+ThreadController threadController = ThreadController();
+EnhancedThread resetThread = EnhancedThread();
 
 const std::vector<int> groupSizes = {PIXEL_COUNT};
 volatile int activeGrpNr = 0;
+
+volatile uint8_t globalBrightness = 128;
 
 // Static size
 struct CRGB leds[PIXEL_COUNT];
@@ -110,15 +109,6 @@ uint8_t currentSat = 255;
 
 //std::vector<NeoGroup *> neoGroups;
 std::vector<NeoGroup> neoGroups;
-
-void udpUpdateLed(int id, byte r, byte g, byte b)
-{
-	if (isAmbilightActive)
-	{
-		NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
-		neoGroup->SetPixel(id, CRGB(r, g, b));
-	}
-}
 
 // **************************************************
 // *** Helper methods
@@ -537,7 +527,8 @@ void SetEffect(int grpNr, int fxNr,
 		fxSpeed,
 		fxFpsFactor);
 
-	if (startFx && !isAmbilightActive)
+	if (startFx &&
+		!(isAmbilightAutoModeActive && isAmbilightActive))
 	{
 		startGroup(grpNr, onlyOnce);
 	}
@@ -617,6 +608,25 @@ void NextColor(int nextCol = -1)
 	DEBUG_PRINTLN("CONTROL: Changing color number to: " + String(currColNr.at(activeGrpNr)) + ".");
 	SetColors(activeGrpNr, currColNr.at(activeGrpNr));
 }
+
+void udpResetMode(void)
+{
+	DEBUG_PRINTLN("Ambilight: UDP timeout, disabling ambilight");
+	resetThread.enabled = false;
+
+	isAmbilightActive = false;
+	startGroup(activeGrpNr, false); // no runOnlyOnce
+}
+
+void udpUpdateLed(int id, byte r, byte g, byte b)
+{
+	if (isAmbilightAutoModeActive &&
+		isAmbilightActive)
+	{
+		NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
+		neoGroup->SetPixel(id, CRGB(r, g, b));
+	}
+}
 #pragma endregion
 
 // **************************************************
@@ -679,17 +689,18 @@ BLYNK_WRITE(V4)
 	pinValue = constrain(pinValue, 0, 1);
 	DEBUG_PRINTLN("BLYNK V4: Ambilight => " + String(pinValue));
 
-	isAmbilightActive = (pinValue == 1);
-	DEBUG_PRINTLN("BLYNK V4: isAmbilightActive => " + String(isAmbilightActive));
-	if (isAmbilightActive)
+	isAmbilightAutoModeActive = (pinValue == 1);
+	DEBUG_PRINTLN("BLYNK V4: isAmbilightAutoModeActive => " + String(isAmbilightAutoModeActive));
+	if (!isAmbilightAutoModeActive)
 	{
-		stopGroup(activeGrpNr, false); // no immediate stop, fade out
-		DEBUG_PRINTLN("BLYNK V4: isGroupFadingOut => " + String(isGroupFadingOut(activeGrpNr)));
-	}
-	else
-	{
+		isAmbilightActive = false;
 		startGroup(activeGrpNr, false); // no runOnlyOnce
 	}
+	// else
+	// {
+	// 	stopGroup(activeGrpNr, false); // no immediate stop, fade out
+	// 	DEBUG_PRINTLN("BLYNK V4: isGroupFadingOut => " + String(isGroupFadingOut(activeGrpNr)));
+	// }
 }
 
 // V10 Colour Palette DropDown
@@ -743,8 +754,8 @@ BLYNK_CONNECTED()
 #ifndef KEEP_ONOFF_FLAGS
 	DEBUG_PRINTLN("Blynk connected: resetting on/off flags to defaults");
 	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
-	Blynk.virtualWrite(V0, neoGroup->Active);  // FX on/off
-	Blynk.virtualWrite(V4, isAmbilightActive); // Ambilight on/off
+	Blynk.virtualWrite(V0, neoGroup->Active);		   // FX on/off
+	Blynk.virtualWrite(V4, isAmbilightAutoModeActive); // Ambilight on/off
 #endif
 
 	DEBUG_PRINTLN("Blynk connected: synchonizing values from cloud");
@@ -795,7 +806,7 @@ void SendStatusToBlynkApp()
 	Blynk.virtualWrite(V1, (uint8_t)((globalBrightness + 1) / 16)); // Brightness
 	Blynk.virtualWrite(V2, (uint8_t)(currFps.at(activeGrpNr) / 5)); // FPS
 	Blynk.virtualWrite(V3, currFxNr.at(activeGrpNr));				// FX Nr
-	Blynk.virtualWrite(V4, isAmbilightActive);						// Ambilight on/off
+	Blynk.virtualWrite(V4, isAmbilightAutoModeActive);				// Ambilight on/off
 	Blynk.virtualWrite(V10, currColNr.at(activeGrpNr));				// Color Palette
 	Blynk.virtualWrite(V12, (uint8_t)currentHue);					// Custom Color Hue
 	Blynk.virtualWrite(V13, (uint8_t)((currentSat + 1) / 16));		// Custom Color Sat
@@ -856,6 +867,11 @@ void setup()
 	DEBUG_PRINTLN("FastLED: Active group #" + String(activeGrpNr));
 
 	BlynkSetup();
+
+	resetThread.onRun(udpResetMode);
+	resetThread.setInterval(AMBILIGHT_AUTO_TIMEOUT);
+	resetThread.enabled = false;
+	threadController.add(&resetThread);
 }
 #pragma endregion
 
@@ -879,18 +895,31 @@ void loop()
 	}
 
 	bool ledsUpdated = false;
-	if (isAmbilightActive &&
-		!isGroupFadingOut(activeGrpNr))
+	if (isAmbilightAutoModeActive &&
+		isAmbilightActive &&
+		!isGroupFadingOut(activeGrpNr)) // wait until FX was faded out
 	{
 		ledsUpdated |= udpLed.handle(true);
 		if (ledsUpdated)
 		{
+			resetThread.reset();
 			DEBUG_PRINTLN("UDP: ambilight data received.");
 		}
 	}
 	else
 	{
-		udpLed.handle(false); // handle, but don't do anything with data
+		if (udpLed.handle(false) &&	// handle, ignore data
+			isAmbilightAutoModeActive) // but switch mode if data was received
+		{
+			if (!isAmbilightActive)
+			{
+				DEBUG_PRINTLN("UDP: data received, switching to AmbiLight mode");
+				isAmbilightActive = true;
+				resetThread.enabled = true;
+				stopGroup(activeGrpNr, false); // no immediate stop, fade out
+			}
+			resetThread.reset();
+		}
 
 		for (int grpNr = 0; grpNr < groupSizes.size(); grpNr++)
 		{
@@ -910,5 +939,7 @@ void loop()
 #endif
 		FastLED.show();
 	}
+
+	threadController.run();
 }
 #pragma endregion

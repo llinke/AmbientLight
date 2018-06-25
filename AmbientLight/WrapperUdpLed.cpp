@@ -63,6 +63,7 @@ bool WrapperUdpLed::handle(bool handleData)
       if (handleData)
       {
         // DEBUG_PRINTLN("UDP: Contents: %s", _udpBuffer);
+        DEBUG_PRINTLN("UDP: data valid, setting LEDs");
         for (int i = 0; i < _ledCount; i++)
         {
           updateLed(i, _udpBuffer[i * 3 + 0], _udpBuffer[i * 3 + 1], _udpBuffer[i * 3 + 2]);
