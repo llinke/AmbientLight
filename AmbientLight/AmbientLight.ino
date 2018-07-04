@@ -78,6 +78,7 @@ const std::vector<int> groupSizes = {PIXEL_COUNT};
 volatile int activeGrpNr = 0;
 
 volatile uint8_t globalBrightness = 128;
+volatile uint8_t ambilightBrightness = 192;
 
 // Static size
 struct CRGB leds[PIXEL_COUNT];
@@ -615,6 +616,10 @@ void udpResetMode(void)
 	resetThread.enabled = false;
 
 	isAmbilightActive = false;
+	FastLED.setBrightness(globalBrightness);
+#ifdef USE_BLYNK
+	Blynk.virtualWrite(V1, (uint8_t)((globalBrightness + 1) / 16)); // Brightness
+#endif
 	startGroup(activeGrpNr, false); // no runOnlyOnce
 }
 
@@ -655,10 +660,31 @@ BLYNK_WRITE(V1)
 	pinValue = constrain(pinValue * 16, 16, 255);
 	DEBUG_PRINTLN("BLYNK V1: grp#" + String(activeGrpNr) + ", brightness => " + String(pinValue));
 
-	globalBrightness = pinValue;
-	FastLED.setBrightness(globalBrightness);
+	if (isAmbilightAutoModeActive && isAmbilightActive)
+	{
+		ambilightBrightness = pinValue;
+		FastLED.setBrightness(ambilightBrightness);
+	}
+	else
+	{
+		globalBrightness = pinValue;
+		FastLED.setBrightness(globalBrightness);
+		Blynk.virtualWrite(V5, (uint8_t)((globalBrightness + 1) / 16)); // Global Brightness
+	}
 }
 
+// V5 Global Brightness
+BLYNK_WRITE(V5)
+{
+	int pinValue = param.asInt();
+	pinValue = constrain(pinValue * 16, 16, 255);
+	DEBUG_PRINTLN("BLYNK V5: grp#" + String(activeGrpNr) + ", global brightness => " + String(pinValue));
+	globalBrightness = pinValue;
+	if (!(isAmbilightAutoModeActive && isAmbilightActive))
+	{
+		FastLED.setBrightness(globalBrightness);
+	}
+}
 // V2 FPS
 BLYNK_WRITE(V2)
 {
@@ -694,6 +720,10 @@ BLYNK_WRITE(V4)
 	if (!isAmbilightAutoModeActive)
 	{
 		isAmbilightActive = false;
+		FastLED.setBrightness(globalBrightness);
+#ifdef USE_BLYNK
+		Blynk.virtualWrite(V1, (uint8_t)((globalBrightness + 1) / 16)); // Brightness
+#endif
 		startGroup(activeGrpNr, false); // no runOnlyOnce
 	}
 	// else
@@ -802,14 +832,18 @@ void SendStatusToBlynkApp()
 
 	DEBUG_PRINTLN("Blynk: sending current values to app");
 	NeoGroup *neoGroup = &(neoGroups.at(activeGrpNr));
-	Blynk.virtualWrite(V0, neoGroup->Active);						// FX on/off
-	Blynk.virtualWrite(V1, (uint8_t)((globalBrightness + 1) / 16)); // Brightness
-	Blynk.virtualWrite(V2, (uint8_t)(currFps.at(activeGrpNr) / 5)); // FPS
-	Blynk.virtualWrite(V3, currFxNr.at(activeGrpNr));				// FX Nr
-	Blynk.virtualWrite(V4, isAmbilightAutoModeActive);				// Ambilight on/off
-	Blynk.virtualWrite(V10, currColNr.at(activeGrpNr));				// Color Palette
-	Blynk.virtualWrite(V12, (uint8_t)currentHue);					// Custom Color Hue
-	Blynk.virtualWrite(V13, (uint8_t)((currentSat + 1) / 16));		// Custom Color Sat
+	Blynk.virtualWrite(V0, neoGroup->Active); // FX on/off
+	Blynk.virtualWrite(V1,
+					   (isAmbilightAutoModeActive && isAmbilightActive)
+						   ? (uint8_t)((ambilightBrightness + 1) / 16)
+						   : (uint8_t)((globalBrightness + 1) / 16)); // Brightness
+	Blynk.virtualWrite(V5, (uint8_t)((globalBrightness + 1) / 16));   // Global Brightness
+	Blynk.virtualWrite(V2, (uint8_t)(currFps.at(activeGrpNr) / 5));   // FPS
+	Blynk.virtualWrite(V3, currFxNr.at(activeGrpNr));				  // FX Nr
+	Blynk.virtualWrite(V4, isAmbilightAutoModeActive);				  // Ambilight on/off
+	Blynk.virtualWrite(V10, currColNr.at(activeGrpNr));				  // Color Palette
+	Blynk.virtualWrite(V12, (uint8_t)currentHue);					  // Custom Color Hue
+	Blynk.virtualWrite(V13, (uint8_t)((currentSat + 1) / 16));		  // Custom Color Sat
 #endif
 }
 
@@ -915,6 +949,10 @@ void loop()
 			{
 				DEBUG_PRINTLN("UDP: data received, switching to AmbiLight mode");
 				isAmbilightActive = true;
+				FastLED.setBrightness(ambilightBrightness);
+#ifdef USE_BLYNK
+				Blynk.virtualWrite(V1, (uint8_t)((ambilightBrightness + 1) / 16)); // Brightness
+#endif
 				resetThread.enabled = true;
 				stopGroup(activeGrpNr, false); // no immediate stop, fade out
 			}
