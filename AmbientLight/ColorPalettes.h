@@ -54,6 +54,7 @@ void DumpPalette(std::vector<CRGB> pal)
 #pragma endregion
 
 #pragma region "WorldCup 2018"
+/*
 const std::vector<String> WorldCupTeamKeys = {
     "RUS", "KSA", "EGY", "URU", // Group A
     "POR", "ESP", "MAR", "IRN", // Group B
@@ -140,6 +141,7 @@ const std::map<String, std::vector<CRGB>> WorldCupTeamColors =
         {"COL", {0xFCD116, 0x003893, 0xCE1126}},
         {"JPN", {0xFFFFFF, 0xBC002D, 0xFFFFFF}},
 };
+*/
 #pragma endregion
 
 #pragma region "Palette Creation"
@@ -366,6 +368,7 @@ std::vector<CRGB> GeneratePaletteFromHue(
 #pragma endregion
 
 #pragma region "WorldCup 2018"
+/*
 std::vector<CRGB> CreateTeamColorPalette(String teamKey)
 {
     DEBUG_PRINTLN("Initializing team " + teamKey + "...");
@@ -389,6 +392,7 @@ std::vector<CRGB> CreateTeamColorPalette(String teamKey)
     // }
     return teamPalette;
 }
+*/
 #pragma endregion
 
 #pragma region "Palette Management"
@@ -422,11 +426,13 @@ void InitColorPalettes()
     AddColorPalette("Farbmix Triade+Komplement", (std::vector<CRGB>)NULL /*TriadPaletteFromHue(hue, 255, true)*/, false);
 
     // World Cup 2018
+/*
     for (int teamNr = 0; teamNr < WorldCupTeamKeys.size(); teamNr++)
     {
         String teamKey = WorldCupTeamKeys[teamNr];
         AddColorPalette("WM18 " + teamKey, CreateTeamColorPalette(teamKey), false);
     }
+*/
 
     // Add some more pretty palettes :-)
     AddColorPalette("Regenbogen" /*"Rainbow"*/, {CRGB(0xFF0000), CRGB(0xD52A00), CRGB(0xAB5500), CRGB(0xAB7F00), CRGB(0xABAB00), CRGB(0x56D500), CRGB(0x00FF00), CRGB(0x00D52A), CRGB(0x00AB55), CRGB(0x0056AA), CRGB(0x0000FF), CRGB(0x2A00D5), CRGB(0x5500AB), CRGB(0x7F0081), CRGB(0xAB0055), CRGB(0xD5002B)});
